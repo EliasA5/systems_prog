@@ -32,6 +32,7 @@ Customer* Trainer::getCustomer(int id){
         if(costumersList[i]->getId() == id)
             return costumersList[i];
     }
+    return nullptr;
 }
 std::vector<Customer*>& Trainer::getCustomers(){
     return customersList;
