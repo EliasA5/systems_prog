@@ -87,38 +87,42 @@ std::vector<int> FullBodyCustomer::order(const std::vector<Workout> &workout_opt
     WorkoutType type;
 
     for(const auto& currentWorkout : workout_options){
-        type = currentWorkout.getType();
-        //ANAEROBIC
-        if(firstA && type == ANAEROBIC){
-            firstA = false;
-            minA = currentWorkout.getPrice();
-            idA = currentWorkout.getId();
+        switch(currentWorkout.getType()){
+            case ANAEROBIC:
+                if (!firstA && currentWorkout.getPrice() < minA) {
+                    minA = currentWorkout.getPrice();
+                    idA = currentWorkout.getId();
+                }
+                else {
+                    firstA = false;
+                    minA = currentWorkout.getPrice();
+                    idA = currentWorkout.getId();
+                }
+                break;
+            case CARDIO:
+                if(!firstC && currentWorkout.getPrice() < minC){
+                    minC = currentWorkout.getPrice();
+                    idC = currentWorkout.getId();
+                }
+                else{
+                    firstC = false;
+                    minC = currentWorkout.getPrice();
+                    idC = currentWorkout.getId();
+                }
+                break;
+            case MIXED:
+                if(!firstM && currentWorkout.getPrice() > maxM){
+                    maxM = currentWorkout.getPrice();
+                    idM = currentWorkout.getId();
+                }
+                else{
+                    firstM = false;
+                    maxM = currentWorkout.getPrice();
+                    idM = currentWorkout.getId();
+                }
+                break;
         }
-        if (!firstA && type == ANAEROBIC && currentWorkout.getPrice() < minA){
-            minA = currentWorkout.getPrice();
-            idA = currentWorkout.getId();
-        }
-        //CARDIO
-        if(firstC && type == CARDIO){
-            firstC = false;
-            minC = currentWorkout.getPrice();
-            idC = currentWorkout.getId();
-        }
-        if (!firstC && type == CARDIO && currentWorkout.getPrice() < minC){
-            minC = currentWorkout.getPrice();
-            idC = currentWorkout.getId();
 
-        }
-        //MIXED
-        if(firstM && type == MIXED){
-            firstM = false;
-            maxM = currentWorkout.getPrice();
-            idM = currentWorkout.getId();
-        }
-        if (!firstM && type == MIXED && currentWorkout.getPrice() > maxM){
-            maxM = currentWorkout.getPrice();
-            idM = currentWorkout.getId();
-        }
     }
     if (!firstC)
         ordersId.push_back(idC);
