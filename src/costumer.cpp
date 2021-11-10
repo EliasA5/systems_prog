@@ -21,7 +21,7 @@ int Customer::getId() const {
 SweatyCustomer::SweatyCustomer(std::string name, int id):Customer(name,id){};
 std::vector<int> SweatyCustomer::order(const std::vector<Workout> &workout_options) {
     std::vector<int> ordersId;
-    for( auto currentWorkout : workout_options){
+    for(const auto& currentWorkout : workout_options){
         if(currentWorkout.getType() == CARDIO)
             ordersId.push_back(currentWorkout.getId());
     }
@@ -40,7 +40,7 @@ std::vector<int> CheapCustomer::order(const std::vector<Workout> &workout_option
     int min = workout_options.at(0).getPrice();
     int minId = workout_options.at(0).getId();
     std::vector<int> ordersId;
-    for( auto currentWorkout : workout_options){
+    for(const auto& currentWorkout : workout_options){
         if(currentWorkout.getPrice() < min){
             min = currentWorkout.getPrice();
             minId = currentWorkout.getId();
@@ -61,7 +61,7 @@ std::vector<int> HeavyMuscleCustomer::order(const std::vector<Workout> &workout_
     std::vector<int> ordersId;
     std::vector<int> orders;
     std::map<int, int> m;
-    for(auto currentWorkout : workout_options){
+    for(const auto& currentWorkout : workout_options){
         m.insert(std::make_pair(currentWorkout.getPrice(),currentWorkout.getId()));
     }
     for (std::map<int, int>::iterator itr = m.begin(); itr != m.end(); itr++) {
@@ -86,7 +86,7 @@ std::vector<int> FullBodyCustomer::order(const std::vector<Workout> &workout_opt
     bool firstA=true,firstM= true,firstC=true;
     WorkoutType type;
 
-    for(auto currentWorkout : workout_options){
+    for(const auto& currentWorkout : workout_options){
         type = currentWorkout.getType();
         //ANAEROBIC
         if(firstA && type == ANAEROBIC){

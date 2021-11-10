@@ -15,8 +15,14 @@ void Trainer::addCustomer(Customer* customer){
 void Trainer::removeCustomer(int id){
     for(int i = 0; i<costumersList.size(); i++){
         if(costumersList[i]->getId() == id) {
-            costumersList.erase(i);
-            //TODO remove from Orderpair
+            costumersList.erase(customersList.begin() + i);
+            i--;
+            //TODO check on move costumer
+            for(int j = 0; j<orderList.size(); j++)
+                if(orderList[j].first == id) {
+                    orderList.erase(orderList.begin() + j);
+                    j--;
+                }
             break;
         }
     }
@@ -35,8 +41,8 @@ std::vector<OrderPair>& Trainer::getOrders(){
 }
 
 void Trainer::order(const int customer_id, const std::vector<int> workout_ids, const std::vector<Workout>& workout_options){
-    for(auto work_id: workout_ids){
-        for(auto work_out: workout_options){
+    for(const auto& work_id: workout_ids){
+        for(const auto& work_out: workout_options){
             if(work_out.getId() == work_id) {
                 orderList.push_back(OrderPair{customer_id, work_out});
                 break;
@@ -53,7 +59,7 @@ void Trainer::closeTrainer(){
 }
 int Trainer::getSalary(){
     int salary = 0;
-    for(auto curr_order : orderList)
+    for(const auto& curr_order : orderList)
         salary += curr_order.second.getPrice();
     return salary;
 }
