@@ -93,7 +93,7 @@ std::vector<int> FullBodyCustomer::order(const std::vector<Workout> &workout_opt
                     minA = currentWorkout.getPrice();
                     idA = currentWorkout.getId();
                 }
-                else {
+                else if(firstA){
                     firstA = false;
                     minA = currentWorkout.getPrice();
                     idA = currentWorkout.getId();
@@ -104,7 +104,7 @@ std::vector<int> FullBodyCustomer::order(const std::vector<Workout> &workout_opt
                     minC = currentWorkout.getPrice();
                     idC = currentWorkout.getId();
                 }
-                else{
+                else if(firstC){
                     firstC = false;
                     minC = currentWorkout.getPrice();
                     idC = currentWorkout.getId();
@@ -115,7 +115,7 @@ std::vector<int> FullBodyCustomer::order(const std::vector<Workout> &workout_opt
                     maxM = currentWorkout.getPrice();
                     idM = currentWorkout.getId();
                 }
-                else{
+                else if(firstM){
                     firstM = false;
                     maxM = currentWorkout.getPrice();
                     idM = currentWorkout.getId();
