@@ -19,11 +19,12 @@ void Trainer::removeCustomer(int id){
             break;
         }
     }
-    for(int j = 0; j<orderList.size(); j++)
-        if(orderList[j].first == id) {
-            orderList.erase(orderList.begin() + j);
-            j--;
-        }
+    //FIXME
+//    for(int j = 0; j<orderList.size(); j++)
+//        if(orderList[j].first == id) {
+//            orderList.erase(orderList.begin() + j);
+//            j--;
+//        }
 }
 Customer* Trainer::getCustomer(int id){
     for(int i = 0; i < customersList.size(); i++){
@@ -57,14 +58,34 @@ void Trainer::closeTrainer(){
     open = false;
 }
 int Trainer::getSalary(){
-    int salary = 0;
-    for(const auto& curr_order : orderList)
-        salary += curr_order.second.getPrice();
     return salary;
 }
 bool Trainer::isOpen(){
     return open;
 }
-
+void Trainer::incSalary() {
+    for(const auto& curr_order : orderList)
+        salary += curr_order.second.getPrice();
+}
+void Trainer::incSalary(int val) {
+    salary += val;
+}
+int Trainer::calSalaryForCustomer(int id) {
+    int sal = 0;
+    for(const auto& order : orderList)
+        if(order.first == id)
+            sal += order.second.getPrice();
+    return sal;
+}
+void Trainer::deleteCustomers() {
+    for(int i = 0; i < customersList.size(); i++){
+        delete customersList[i];
+        customersList[i] = nullptr;
+    }
+    customersList.clear();
+}
+void Trainer::removeOrders() {
+    orderList.clear();
+}
 
 

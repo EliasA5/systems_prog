@@ -21,6 +21,11 @@ public:
     void closeTrainer();
     int getSalary();
     bool isOpen();
+    void incSalary();
+    void incSalary(int val);
+    int calSalaryForCustomer(int id);
+    void deleteCustomers();
+    void removeOrders();
 private:
     int capacity;
     bool open;
