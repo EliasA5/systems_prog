@@ -62,7 +62,8 @@ std::vector<int> HeavyMuscleCustomer::order(const std::vector<Workout> &workout_
     std::vector<int> orders;
     std::map<int, int> m;
     for(const auto& currentWorkout : workout_options){
-        m.insert(std::make_pair(currentWorkout.getPrice(),currentWorkout.getId()));
+        if(currentWorkout.getType() == ANAEROBIC)
+            m.insert(std::make_pair(currentWorkout.getPrice(),currentWorkout.getId()));
     }
     for (std::map<int, int>::iterator itr = m.begin(); itr != m.end(); itr++) {
         orders.push_back(itr->second);
