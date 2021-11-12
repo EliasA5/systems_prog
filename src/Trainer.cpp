@@ -3,32 +3,32 @@
 typedef std::pair<int, Workout> OrderPair;
 
 
-Trainer::Trainer(int t_capacity) capacity(t_capacity), open(false){}
-int Trainer::getCapacity(){
+Trainer::Trainer(int t_capacity): capacity(t_capacity), open(false){}
+int Trainer::getCapacity() const{
     return capacity;
 }
 void Trainer::addCustomer(Customer* customer){
-    costumerList.push_back(customer);
+    customersList.push_back(customer);
 }
 void Trainer::removeCustomer(int id){
-    for(int i = 0; i<costumersList.size(); i++){
-        if(costumersList[i]->getId() == id) {
-            costumersList.erase(customersList.begin() + i);
+    for(int i = 0; i<customersList.size(); i++){
+        if(customersList[i]->getId() == id) {
+            customersList.erase(customersList.begin() + i);
             i--;
-            //TODO check on move costumer
-            for(int j = 0; j<orderList.size(); j++)
-                if(orderList[j].first == id) {
-                    orderList.erase(orderList.begin() + j);
-                    j--;
-                }
+            //TODO check on move customer
             break;
         }
     }
+    for(int j = 0; j<orderList.size(); j++)
+        if(orderList[j].first == id) {
+            orderList.erase(orderList.begin() + j);
+            j--;
+        }
 }
 Customer* Trainer::getCustomer(int id){
-    for(int i = 0; i < costumersList.size(); i++){
-        if(costumersList[i]->getId() == id)
-            return costumersList[i];
+    for(int i = 0; i < customersList.size(); i++){
+        if(customersList[i]->getId() == id)
+            return customersList[i];
     }
     return nullptr;
 }
