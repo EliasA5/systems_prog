@@ -3,7 +3,7 @@
 typedef std::pair<int, Workout> OrderPair;
 
 
-Trainer::Trainer(int t_capacity): capacity(t_capacity), open(false){}
+Trainer::Trainer(int t_capacity): capacity(t_capacity), open(false), salary(0){}
 int Trainer::getCapacity() const{
     return capacity;
 }
