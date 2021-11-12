@@ -20,6 +20,7 @@ public:
 
 private:
     bool open;
+    int num_of_trainers;
     std::vector<Trainer*> trainers;
     std::vector<Workout> workout_options;
     std::vector<BaseAction*> actionsLog;
