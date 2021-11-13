@@ -116,6 +116,9 @@ std::string MoveCustomer::toString() const {
         return ss.str();
     }
 }
+BaseAction* MoveCustomer::copy() const{
+    return new MoveCustomer(srcTrainer, dstTrainer, id);
+}
 
 Close::Close(int id): trainerId(id){}
 void Close::act(Studio &studio) {

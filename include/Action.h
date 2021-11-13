@@ -85,6 +85,7 @@ public:
     PrintWorkoutOptions();
     void act(Studio &studio);
     std::string toString() const;
+    BaseAction* copy() const;
 private:
 };
 
@@ -94,6 +95,7 @@ public:
     PrintTrainerStatus(int id);
     void act(Studio &studio);
     std::string toString() const;
+    BaseAction* copy() const;
 private:
     const int trainerId;
 };
@@ -104,6 +106,7 @@ public:
     PrintActionsLog();
     void act(Studio &studio);
     std::string toString() const;
+    BaseAction* copy() const;
 private:
 };
 
@@ -113,6 +116,7 @@ public:
     BackupStudio();
     void act(Studio &studio);
     std::string toString() const;
+    BaseAction* copy() const;
 private:
 };
 
@@ -122,7 +126,8 @@ public:
     RestoreStudio();
     void act(Studio &studio);
     std::string toString() const;
-
+    BaseAction* copy() const;
+private:
 };
 
 
