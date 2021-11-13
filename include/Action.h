@@ -18,7 +18,6 @@ public:
     ActionStatus getStatus() const;
     virtual void act(Studio& studio)=0;
     virtual std::string toString() const=0;
-    virtual ~BaseAction() = default;
     virtual BaseAction* copy() const = 0;
 protected:
     void complete();
@@ -37,6 +36,7 @@ public:
     std::string toString() const;
     BaseAction* copy() const;
 private:
+    std::string toStr;
 	const int trainerId;
 	std::vector<Customer *> customers;
 };

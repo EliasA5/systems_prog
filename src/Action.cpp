@@ -35,14 +35,18 @@ void OpenTrainer::act(Studio &studio) {
     for(const auto& customer : customers)
         trainer->addCustomer(customer);
     trainer->openTrainer();
+
+    std::stringstream ss;
+    ss << "open " << trainerId << " ";
+    for(const auto& customer : customers){
+        ss << customer->getName() << "," << customer->toString() << " ";
+    }
+    toStr = ss.str();
     complete();
 }
 std::string OpenTrainer::toString() const{
     std::stringstream ss;
-    ss <<"open " << trainerId << " ";
-    for(const auto& customer : customers){
-        ss << customer->getName() << "," << customer->toString() << " ";
-    }
+    ss << toStr;
     if(getStatus() == ERROR){
         ss << getErrorMsg();
         return ss.str();
@@ -164,8 +168,8 @@ CloseAll::CloseAll() {}
 void CloseAll::act(Studio &studio) {
     for(int i = 0; i < studio.getNumOfTrainers(); i++){
         Close(i).act(studio);
-        delete studio.getTrainer(i);
     }
+    studio.deleteTrainers();
     studio.deleteActionsLog();
     complete();
 }
@@ -221,8 +225,10 @@ BaseAction* PrintTrainerStatus::copy() const{
 
 PrintActionsLog::PrintActionsLog() {}
 void PrintActionsLog::act(Studio &studio) {
-    for(const auto& action : studio.getActionsLog())
-        std::cout << action->toString();
+    for(const auto& action : studio.getActionsLog()) {
+        std::string s = action->toString();
+        std::cout << s;
+    }
 }
 std::string PrintActionsLog::toString() const {
     return "PrintActionsLog Completed\n";
@@ -249,7 +255,7 @@ BaseAction* BackupStudio::copy() const{
 RestoreStudio::RestoreStudio() {}
 void RestoreStudio::act(Studio &studio) {
     if(backup == nullptr){
-        error("No backup available");
+        error("No backup available\n");
         return;
     }
     studio = *backup;
