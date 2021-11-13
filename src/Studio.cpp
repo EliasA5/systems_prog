@@ -21,6 +21,7 @@ Studio::Studio(const std::string &configFilePath): open(false){
             case numOfTrainers: {
                 //numOfTrainers Parser
                 num_of_trainers = stoi(line);
+                trainers.reserve(num_of_trainers);
                 type = actualTrainers;
                 break;
             }
@@ -65,6 +66,8 @@ Studio::Studio(const std::string &configFilePath): open(false){
 }
 
 void Studio::start() {
+    if(open)
+        return;
     open = true;
     std::cout << "Studio is now open!\n";
     //TODO add loop parse inputs
@@ -74,6 +77,7 @@ void Studio::start() {
 //    for(const auto& work : workout_options)
 //        std::cout << "name:" << work.getName() << ", type: " << work.getType() << ", price:" << work.getPrice() << "\n";
 
+    CloseAll().act(*this);
 }
 
 int Studio::getNumOfTrainers() const{
@@ -91,4 +95,55 @@ const std::vector<BaseAction*>& Studio::getActionsLog() const{
 
 std::vector<Workout>& Studio::getWorkoutOptions(){
     return workout_options;
+}
+
+void Studio::deleteActionsLog() {
+    for(int i =0; i<actionsLog.size(); i++)
+        delete actionsLog[i];
+}
+Studio::~Studio(){CloseAll().act(*this);}
+//copy constructor
+Studio::Studio(const Studio &stud): open(stud.open), num_of_trainers(stud.num_of_trainers){
+    copy(stud.open, stud.num_of_trainers, stud.trainers, stud.workout_options, stud.actionsLog);
+}
+//move constructor
+Studio::Studio(Studio&& stud): open(stud.open), num_of_trainers(stud.num_of_trainers){
+    trainers = std::move(stud.trainers);
+    actionsLog = std::move(stud.actionsLog);
+}
+//copy assignment
+Studio& Studio::operator=(const Studio &stud){
+    if(this != &stud){
+        CloseAll().act(*this);
+        workout_options.clear();
+        num_of_trainers = 0;
+        open = false;
+        copy(stud.open, stud.num_of_trainers, stud.trainers, stud.workout_options, stud.actionsLog);
+    }
+    return *this;
+}
+//move assignment
+Studio& Studio::operator=(Studio &stud){
+    if(this != &stud){
+        CloseAll().act(*this);
+        open = stud.open;
+        num_of_trainers = stud.num_of_trainers;
+        trainers = std::move(stud.trainers);
+        workout_options = std::move(stud.workout_options);
+        actionsLog = std::move(stud.actionsLog);
+        stud.open = false;
+        stud.num_of_trainers = 0;
+    }
+    return *this;
+}
+void Studio::copy(bool _open, int _num_of_trainers, std::vector<Trainer *> _trainers,
+                  std::vector<Workout> _workout_options, std::vector<BaseAction *> _actionsLog) {
+    open = _open;
+    num_of_trainers = _num_of_trainers;
+    for(int i = 0; i<_num_of_trainers; i++){
+        trainers[i] = new Trainer(*_trainers[i]);
+    }
+    workout_options = _workout_options;
+    for(int i = 0; i<_actionsLog.size(); i++)
+        actionsLog[i] = _actionsLog[i]->copy();
 }
