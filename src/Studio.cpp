@@ -29,10 +29,10 @@ Studio::Studio(const std::string &configFilePath): open(false), num_of_trainers(
                 //Trainers Parser
                 std::stringstream ss(line);
                 std::vector<int> trainersCapacity;
-                for (int i; ss >> i;) {
-                    trainersCapacity.push_back(i);
-                    if (ss.peek() == ',')
-                        ss.ignore();
+                while(ss.good()){
+                    std::string parsed;
+                    getline(ss, parsed, ',');
+                    trainersCapacity.push_back(stoi(parsed));
                 }
                 for (const auto &capacity: trainersCapacity) {
                     //TODO remove trainers in studio deconstuctor
