@@ -1,4 +1,5 @@
 #include "Trainer.h"
+#include <algorithm>
 
 typedef std::pair<int, Workout> OrderPair;
 
@@ -11,20 +12,29 @@ void Trainer::addCustomer(Customer* customer){
     customersList.push_back(customer);
 }
 void Trainer::removeCustomer(int id){
-    for(int i = 0; i<customersList.size(); i++){
-        if(customersList[i]->getId() == id) {
+    for(int i = 0; i<customersList.size(); i++)
+        if (customersList[i]->getId() == id) {
             customersList.erase(customersList.begin() + i);
             i--;
             //TODO check on move customer
             break;
         }
-    }
-    //FIXME
-//    for(int j = 0; j<orderList.size(); j++)
-//        if(orderList[j].first == id) {
-//            orderList.erase(orderList.begin() + j);
-//            j--;
+//    std::vector<OrderPair> newList;
+//    for(int i = 0; i<orderList.size(); i++) {
+//        std::pair<int, Workout> order = orderList[i];
+//        if (order.first != id) {
+//            newList.push_back(orderList[i]);
 //        }
+//    }
+//    orderList.clear();
+//    orderList = newList;
+//    int i = 0;
+//    while(i < orderList.size())
+//        if(orderList[i].first == id)
+//            orderList.erase(orderList.begin() + i);
+//        else
+//            i++;
+//        //FIXME
 }
 Customer* Trainer::getCustomer(int id){
     for(int i = 0; i < customersList.size(); i++){
@@ -44,13 +54,13 @@ void Trainer::order(const int customer_id, const std::vector<int> workout_ids, c
     for(const auto& work_id: workout_ids){
         for(const auto& work_out: workout_options){
             if(work_out.getId() == work_id) {
-                orderList.push_back(OrderPair{customer_id, work_out});
+                orderList.push_back(std::make_pair(customer_id, work_out));
                 break;
             }
         }
     }
 }
-//TODO add printing
+
 void Trainer::openTrainer(){
     open = true;
 }
@@ -86,6 +96,54 @@ void Trainer::deleteCustomers() {
 }
 void Trainer::removeOrders() {
     orderList.clear();
+}
+//deconstructor
+Trainer::~Trainer() {deleteCustomers();}
+//copy constructor
+Trainer::Trainer(const Trainer &other): capacity(other.capacity), open(other.open), salary(other.salary){
+    orderList = other.orderList;
+    for(int i = 0; i<other.customersList.size(); i++){
+        customersList[i] = other.customersList[i]->copy();
+    }
+}
+//move constructor
+Trainer::Trainer(Trainer &&other): capacity(other.capacity), open(other.open), salary(other.salary){
+    customersList = std::move(other.customersList);
+    orderList = std::move(other.orderList);
+    other.salary = 0;
+    other.capacity = 0;
+    other.open = false;
+}
+//copy assignment
+Trainer& Trainer::operator=(const Trainer &other){
+    if(this != &other){
+        deleteCustomers();
+        removeOrders();
+        capacity = other.capacity;
+        open = other.open;
+        salary = other.salary;
+        for(int i = 0; i<other.customersList.size(); i++){
+            customersList[i] = other.customersList[i]->copy();
+        }
+        orderList = other.orderList;
+    }
+    return *this;
+}
+//move assignment
+Trainer& Trainer::operator=(Trainer &&other){
+    if(this != &other){
+        deleteCustomers();
+        removeOrders();
+        capacity = other.capacity;
+        open = other.open;
+        salary = other.salary;
+        customersList = std::move(other.customersList);
+        orderList = std::move(other.orderList);
+        other.capacity = 0;
+        other.open = false;
+        other.salary = 0;
+    }
+    return *this;
 }
 
 

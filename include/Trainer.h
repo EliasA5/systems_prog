@@ -26,6 +26,16 @@ public:
     int calSalaryForCustomer(int id);
     void deleteCustomers();
     void removeOrders();
+    //destructor
+    virtual ~Trainer();
+    //copy constructor
+    Trainer(const Trainer &other);
+    //move constructor
+    Trainer(Trainer &&other);
+    //copy assignment
+    Trainer& operator=(const Trainer &other);
+    //move assignment
+    Trainer& operator=(Trainer &&other);
 private:
     int capacity;
     bool open;
