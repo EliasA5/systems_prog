@@ -1,7 +1,7 @@
 #include "Action.h"
 #include "Studio.h"
 #include <sstream>
-
+extern Studio* backup;
 BaseAction::BaseAction() {}
 
 ActionStatus BaseAction::getStatus() const {
@@ -52,6 +52,13 @@ std::string OpenTrainer::toString() const{
         return ss.str();
     }
 }
+BaseAction* OpenTrainer::copy() const{
+    std::vector<Customer *> customersList;
+    for(int i = 0; i<customers.size(); i++){
+        customersList.push_back(customers[i]->copy());
+    }
+    return new OpenTrainer(trainerId, customersList);
+}
 
 //order
 Order::Order(int id): trainerId(id){}
@@ -80,6 +87,9 @@ std::string Order::toString() const {
         ss << "Completed\n";
         return ss.str();
     }
+}
+BaseAction* Order::copy() const{
+    return new Order(trainerId);
 }
 
 MoveCustomer::MoveCustomer(int src, int dst, int customerId): srcTrainer(src), dstTrainer(dst), id(customerId) {}
@@ -146,6 +156,9 @@ std::string Close::toString() const {
         return ss.str();
     }
 }
+BaseAction* Close::copy() const{
+    return new Close(trainerId);
+}
 //closeALL
 CloseAll::CloseAll() {}
 void CloseAll::act(Studio &studio) {
@@ -153,10 +166,14 @@ void CloseAll::act(Studio &studio) {
         Close(i).act(studio);
         delete studio.getTrainer(i);
     }
+    studio.deleteActionsLog();
     complete();
 }
 std::string CloseAll::toString() const {
     return "CloseAll Completed\n";
+}
+BaseAction* CloseAll::copy() const{
+    return new CloseAll();
 }
 //PrintWorkoutOptions
 PrintWorkoutOptions::PrintWorkoutOptions() {}
@@ -169,6 +186,9 @@ void PrintWorkoutOptions::act(Studio &studio) {
 }
 std::string PrintWorkoutOptions::toString() const{
     return "PrintWorkoutOptions Completed\n";
+}
+BaseAction* PrintWorkoutOptions::copy() const{
+    return new PrintWorkoutOptions();
 }
 //PrintTrainerStatus
 PrintTrainerStatus::PrintTrainerStatus(int id): trainerId(id) {}
@@ -195,6 +215,9 @@ void PrintTrainerStatus::act(Studio &studio) {
 std::string PrintTrainerStatus::toString() const{
     return "PrintTrainerStatus Completed\n";
 }
+BaseAction* PrintTrainerStatus::copy() const{
+    return new PrintTrainerStatus(trainerId);
+}
 
 PrintActionsLog::PrintActionsLog() {}
 void PrintActionsLog::act(Studio &studio) {
@@ -203,6 +226,48 @@ void PrintActionsLog::act(Studio &studio) {
 }
 std::string PrintActionsLog::toString() const {
     return "PrintActionsLog Completed\n";
+}
+BaseAction* PrintActionsLog::copy() const{
+    return new PrintActionsLog();
+}
+BackupStudio::BackupStudio() {}
+void BackupStudio::act(Studio &studio) {
+    if(backup!= nullptr) {
+        delete backup;
+        backup = nullptr;
+    }
+    backup = new Studio(studio);
+    complete();
+}
+std::string BackupStudio::toString() const {
+    return "Studio Backed Up Completed\n";
+}
+BaseAction* BackupStudio::copy() const{
+    return new BackupStudio();
+}
+
+RestoreStudio::RestoreStudio() {}
+void RestoreStudio::act(Studio &studio) {
+    if(backup == nullptr){
+        error("No backup available");
+        return;
+    }
+    studio = *backup;
+    complete();
+}
+std::string RestoreStudio::toString() const {
+    std::stringstream ss("restore ");
+    if(getStatus() == ERROR){
+        ss << getErrorMsg();
+        return ss.str();
+    }
+    else{
+        ss << "Completed\n";
+        return ss.str();
+    }
+}
+BaseAction* RestoreStudio::copy() const{
+    return new RestoreStudio();
 }
 
 
