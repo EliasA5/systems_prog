@@ -5,7 +5,7 @@
 
 Studio::Studio(): open(false){}
 
-Studio::Studio(const std::string &configFilePath): open(false){
+Studio::Studio(const std::string &configFilePath): open(false), num_of_trainers(0){
     std::ifstream configFile(configFilePath);
     std::string line;
     enum readType{numOfTrainers, actualTrainers, actualWorkouts};
@@ -109,7 +109,9 @@ Studio::Studio(const Studio &stud): open(stud.open), num_of_trainers(stud.num_of
 //move constructor
 Studio::Studio(Studio&& stud): open(stud.open), num_of_trainers(stud.num_of_trainers){
     trainers = std::move(stud.trainers);
+    workout_options = std::move(stud.workout_options);
     actionsLog = std::move(stud.actionsLog);
+
 }
 //copy assignment
 Studio& Studio::operator=(const Studio &stud){
@@ -143,7 +145,8 @@ void Studio::copy(bool _open, int _num_of_trainers, std::vector<Trainer *> _trai
     for(int i = 0; i<_num_of_trainers; i++){
         trainers[i] = new Trainer(*_trainers[i]);
     }
-    workout_options = _workout_options;
+    for(int i = 0; i< _workout_options.size(); i++)
+        workout_options.push_back(_workout_options[i]);
     for(int i = 0; i<_actionsLog.size(); i++)
         actionsLog[i] = _actionsLog[i]->copy();
 }

@@ -19,21 +19,13 @@ void Trainer::removeCustomer(int id){
             //TODO check on move customer
             break;
         }
-//    std::vector<OrderPair> newList;
-//    for(int i = 0; i<orderList.size(); i++) {
-//        std::pair<int, Workout> order = orderList[i];
-//        if (order.first != id) {
-//            newList.push_back(orderList[i]);
-//        }
-//    }
-//    orderList.clear();
-//    orderList = newList;
-//    int i = 0;
-//    while(i < orderList.size())
-//        if(orderList[i].first == id)
-//            orderList.erase(orderList.begin() + i);
-//        else
-//            i++;
+    std::vector<OrderPair> newList;
+    for(int i = 0; i<orderList.size(); i++) {
+        if (orderList[i].first != id) {
+            newList.push_back(orderList[i]);
+        }
+    }
+    orderList = std::move(newList);
 //        //FIXME
 }
 Customer* Trainer::getCustomer(int id){
@@ -101,7 +93,9 @@ void Trainer::removeOrders() {
 Trainer::~Trainer() {deleteCustomers();}
 //copy constructor
 Trainer::Trainer(const Trainer &other): capacity(other.capacity), open(other.open), salary(other.salary){
-    orderList = other.orderList;
+    removeOrders();
+    for(int i = 0; i< other.orderList.size(); i++)
+        orderList.push_back(other.orderList[i]);
     for(int i = 0; i<other.customersList.size(); i++){
         customersList[i] = other.customersList[i]->copy();
     }
@@ -125,7 +119,8 @@ Trainer& Trainer::operator=(const Trainer &other){
         for(int i = 0; i<other.customersList.size(); i++){
             customersList[i] = other.customersList[i]->copy();
         }
-        orderList = other.orderList;
+        for(int i = 0; i< other.orderList.size(); i++)
+            orderList.push_back(other.orderList[i]);
     }
     return *this;
 }
