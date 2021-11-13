@@ -28,7 +28,8 @@ public:
     Studio& operator=(const Studio &stud);
     //move assignment
     Studio& operator=(Studio &stud);
-    void copy(bool _open, int _num_of_trainers, std::vector<Trainer*> _trainers, std::vector<Workout> _workout_options, std::vector<BaseAction*> _actionsLog);
+    void copy(const bool &_open, const int &_num_of_trainers, const std::vector<Trainer*> &_trainers, const std::vector<Workout> &_workout_options, const std::vector<BaseAction*> &_actionsLog);
+    void deleteTrainers();
 
 private:
     bool open;

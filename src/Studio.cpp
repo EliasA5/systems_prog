@@ -70,14 +70,131 @@ void Studio::start() {
         return;
     open = true;
     std::cout << "Studio is now open!\n";
-    //TODO add loop parse inputs
 //    for(const auto& trainer : trainers) {
 //        std::cout << trainer->getCapacity() << "\n";
 //    }
 //    for(const auto& work : workout_options)
 //        std::cout << "name:" << work.getName() << ", type: " << work.getType() << ", price:" << work.getPrice() << "\n";
+    int customerId = 0;
+    std::string line;
+    //FIXME on windows \r gets added to end of line, check on linux
+    while(getline(std::cin, line)){
+        if(line[0] == '#' || line.empty())
+            continue;
+        std::vector<std::string> args;
+        std::stringstream ss(line);
+        while (ss.good()) {
+            std::string parsed;
+            getline(ss, parsed, ' ');
+            args.push_back(parsed);
+        }
+        std::string command = args[0];
 
+        if(command == "open"){
+            int trainerId = std::stoi(args[1]);
+            std::vector<Customer *> customersList;
+            for(int i = 2; i<args.size(); i++){
+                int delim = args[i].find(',');
+                std::string name = args[i].substr(0, delim);
+                std::string type_name = args[i].substr(delim+1);
+                Customer* cus;
+                if(type_name == "swt"){
+                    cus = new SweatyCustomer(name, customerId);
+                }
+                else if(type_name == "chp"){
+                    cus = new CheapCustomer(name, customerId);
+                }
+                else if(type_name == "mcl"){
+                    cus = new HeavyMuscleCustomer(name, customerId);
+                }
+                else{
+                    cus = new FullBodyCustomer(name, customerId);
+                }
+                customersList.push_back(cus);
+                customerId++;
+            }
+            OpenTrainer *action = new OpenTrainer(trainerId, customersList);
+            action->act(*this);
+            if(action->getStatus() == ERROR){
+                for(int i = 0; i<customersList.size(); i++) {
+                    delete customersList[i];
+                    customersList[i] = nullptr;
+                    customerId--;
+                }
+                std::cout << "Trainer does not exist or is not open\n";
+            }
+            actionsLog.push_back(action);
+        }
+        else if(command == "order"){
+            int trainerId = std::stoi(args[1]);
+            Order *action = new Order(trainerId);
+            action->act(*this);
+            if(action->getStatus() == ERROR)
+                std::cout << "Trainer does not exist or is not open\n";
+            else{
+                std::stringstream strm;
+                Trainer *trainer = getTrainer(trainerId);
+                for(const auto& order: trainer->getOrders())
+                    strm << trainer->getCustomer(order.first)->getName() << " Is Doing " << order.second.getName() << "\n";
+                std::cout << strm.str();
+            }
+            actionsLog.push_back(action);
+        }
+        else if(command == "move"){
+            int trainerId = std::stoi(args[1]);
+            int trainer_dst = std::stoi(args[2]);
+            int cus_id = std::stoi(args[3]);
+            MoveCustomer *action = new MoveCustomer(trainerId, trainer_dst, cus_id);
+            action->act(*this);
+            if(action->getStatus() == ERROR)
+                std::cout << "Cannot move customer\n";
+            actionsLog.push_back(action);
+        }
+        else if(command == "close"){
+            int trainerId = std::stoi(args[1]);
+            Close *action = new Close(trainerId);
+            action->act(*this);
+            if(action->getStatus() == ERROR)
+                std::cout << "Trainer does not exist or is not open\n";
+            actionsLog.push_back(action);
+        }
+        else if(command == "closeall"){
+            break;
+        }
+        else if(command == "workout_options"){
+            PrintWorkoutOptions *action = new PrintWorkoutOptions();
+            action->act(*this);
+            actionsLog.push_back(action);
+        }
+        else if(command == "status"){
+            int trainerId = std::stoi(args[1]);
+            PrintTrainerStatus *action = new PrintTrainerStatus(trainerId);
+            action->act(*this);
+            actionsLog.push_back(action);
+        }
+        else if(command == "log"){
+            PrintActionsLog *action = new PrintActionsLog();
+            action->act(*this);
+            actionsLog.push_back(action);
+        }
+        else if(command == "backup"){
+            BackupStudio *action = new BackupStudio();
+            action->act(*this);
+            actionsLog.push_back(action);
+        }
+        else if(command == "restore"){
+            RestoreStudio *action = new RestoreStudio();
+            action->act(*this);
+            if(action->getStatus() == ERROR)
+                std::cout << "No backup available\n";
+            actionsLog.push_back(action);
+        }
+        else{
+            std::cout << "not a valid command\n";
+        }
+    }
     CloseAll().act(*this);
+    open = false;
 }
 
 int Studio::getNumOfTrainers() const{
@@ -85,7 +202,7 @@ int Studio::getNumOfTrainers() const{
 }
 
 Trainer* Studio::getTrainer(int tid){
-    if(tid > getNumOfTrainers())
+    if(tid > getNumOfTrainers() || tid < 0)
         return nullptr;
     return trainers[tid];
 }
@@ -99,9 +216,17 @@ std::vector<Workout>& Studio::getWorkoutOptions(){
 
 void Studio::deleteActionsLog() {
     for(int i =0; i<actionsLog.size(); i++)
-        delete actionsLog[i];
+        if(actionsLog[i] != nullptr) {
+            delete actionsLog[i];
+            actionsLog[i] = nullptr;
+        }
+    actionsLog.clear();
+
 }
-Studio::~Studio(){CloseAll().act(*this);}
+Studio::~Studio(){
+    if(open)
+        CloseAll().act(*this);
+}
 //copy constructor
 Studio::Studio(const Studio &stud): open(stud.open), num_of_trainers(stud.num_of_trainers){
     copy(stud.open, stud.num_of_trainers, stud.trainers, stud.workout_options, stud.actionsLog);
@@ -138,15 +263,24 @@ Studio& Studio::operator=(Studio &stud){
     }
     return *this;
 }
-void Studio::copy(bool _open, int _num_of_trainers, std::vector<Trainer *> _trainers,
-                  std::vector<Workout> _workout_options, std::vector<BaseAction *> _actionsLog) {
+void Studio::copy(const bool &_open, const int &_num_of_trainers, const std::vector<Trainer *> &_trainers,
+                  const std::vector<Workout> &_workout_options, const std::vector<BaseAction *> &_actionsLog) {
     open = _open;
     num_of_trainers = _num_of_trainers;
     for(int i = 0; i<_num_of_trainers; i++){
-        trainers[i] = new Trainer(*_trainers[i]);
+        trainers.push_back(new Trainer(*_trainers[i]));
     }
     for(int i = 0; i< _workout_options.size(); i++)
         workout_options.push_back(_workout_options[i]);
     for(int i = 0; i<_actionsLog.size(); i++)
-        actionsLog[i] = _actionsLog[i]->copy();
+        actionsLog.push_back(_actionsLog[i]->copy());
+}
+
+void Studio::deleteTrainers(){
+    for(int i = 0; i<trainers.size(); i++)
+        if(trainers[i] != nullptr){
+            delete trainers[i];
+            trainers[i] = nullptr;
+        }
+    trainers.clear();
 }
