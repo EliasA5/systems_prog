@@ -16,7 +16,6 @@ void Trainer::removeCustomer(int id){
         if (customersList[i]->getId() == id) {
             customersList.erase(customersList.begin() + i);
             i--;
-            //TODO check on move customer
             break;
         }
     std::vector<OrderPair> newList;
@@ -26,7 +25,6 @@ void Trainer::removeCustomer(int id){
         }
     }
     orderList = std::move(newList);
-//        //FIXME
 }
 Customer* Trainer::getCustomer(int id){
     for(int i = 0; i < customersList.size(); i++){
@@ -97,7 +95,7 @@ Trainer::Trainer(const Trainer &other): capacity(other.capacity), open(other.ope
     for(int i = 0; i< other.orderList.size(); i++)
         orderList.push_back(other.orderList[i]);
     for(int i = 0; i<other.customersList.size(); i++){
-        customersList[i] = other.customersList[i]->copy();
+        customersList.push_back(other.customersList[i]->copy());
     }
 }
 //move constructor
