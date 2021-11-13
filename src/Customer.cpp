@@ -30,6 +30,9 @@ std::vector<int> SweatyCustomer::order(const std::vector<Workout> &workout_optio
 std::string SweatyCustomer::toString() const{
     return "swt";
 }
+Customer* SweatyCustomer::copy() const{
+    return new SweatyCustomer(*this);
+}
 
 
 
@@ -50,6 +53,9 @@ std::vector<int> CheapCustomer::order(const std::vector<Workout> &workout_option
 }
 std::string CheapCustomer::toString() const{
     return "chp";
+}
+Customer* CheapCustomer::copy() const{
+    return new CheapCustomer(*this);
 }
 
 
@@ -74,6 +80,9 @@ std::vector<int> HeavyMuscleCustomer::order(const std::vector<Workout> &workout_
 }
 std::string HeavyMuscleCustomer::toString() const{
     return "mcl";
+}
+Customer* HeavyMuscleCustomer::copy() const{
+    return new HeavyMuscleCustomer(*this);
 }
 
 
@@ -134,4 +143,7 @@ std::vector<int> FullBodyCustomer::order(const std::vector<Workout> &workout_opt
 }
 std::string FullBodyCustomer::toString() const{
     return "fbd";
+}
+Customer* FullBodyCustomer::copy() const{
+    return new FullBodyCustomer(*this);
 }
