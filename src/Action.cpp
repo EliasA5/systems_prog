@@ -73,6 +73,23 @@ OpenTrainer::~OpenTrainer() {
         }
     customers.clear();
 }
+OpenTrainer::OpenTrainer(const OpenTrainer &other): trainerId(other.trainerId){
+    toStr = other.toStr;
+    for(int i = 0; i < other.customers.size(); i++)
+        customers.push_back(other.customers[i]->copy());
+    if(other.getStatus() == ERROR)
+        error(other.getErrorMsg());
+    else
+        complete();
+}
+OpenTrainer::OpenTrainer(OpenTrainer&& other): trainerId(other.trainerId){
+    toStr = other.toStr;
+    customers = std::move(other.customers);
+    if(other.getStatus() == ERROR)
+        error(other.getErrorMsg());
+    else
+        complete();
+}
 
 //order
 Order::Order(int id): trainerId(id){}
@@ -128,7 +145,7 @@ void MoveCustomer::act(Studio &studio) {
     }
     int salaryForCustomer = src_trainer->calSalaryForCustomer(id);
     src_trainer->removeCustomer(id);
-    if(src_trainer->getCustomers().size() == 0){
+    if(src_trainer->getCustomers().empty()){
         Close(srcTrainer).act(studio);
     }
     dst_trainer->addCustomer(customer);

@@ -37,6 +37,11 @@ public:
     std::string toString() const;
     BaseAction* copy() const;
     ~OpenTrainer();
+    //copy constructor
+    OpenTrainer(const OpenTrainer &other);
+    //move constructor
+    OpenTrainer(OpenTrainer&& other);
+
 private:
     std::string toStr;
 	const int trainerId;
