@@ -14,22 +14,22 @@ studio: ./bin/main.o ./bin/Studio.o ./bin/Workout.o ./bin/Action.o ./bin/Custome
 	@echo 'studio built'
 	@echo ' '
 
-./bin/main.o: src/main.cpp
-	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/main.o src/main.cpp
-./bin/Studio.o: src/Studio.cpp
-	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Studio.o src/Studio.cpp
+./bin/main.o: ./src/main.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/main.o ./src/main.cpp
+./bin/Studio.o: ./src/Studio.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Studio.o ./src/Studio.cpp
 
-./bin/Workout.o: src/Workout.cpp
-	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Workout.o src/Workout.cpp
+./bin/Workout.o: ./src/Workout.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Workout.o ./src/Workout.cpp
 	
-./bin/Action.o: src/Action.cpp
-	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Action.o src/Action.cpp
+./bin/Action.o: ./src/Action.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Action.o ./src/Action.cpp
 	
-./bin/Customer.o: src/Customer.cpp
-	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Customer.o src/Customer.cpp
+./bin/Customer.o: ./src/Customer.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Customer.o ./src/Customer.cpp
 	
-./bin/Trainer.o: src/Trainer.cpp
-	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Trainer.o src/Trainer.cpp
+./bin/Trainer.o: ./src/Trainer.cpp
+	$(CC) $(CFLAGS) -c -Iinclude -o ./bin/Trainer.o ./src/Trainer.cpp
 	
 clean:
 	rm -f ./bin/*
