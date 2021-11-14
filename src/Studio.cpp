@@ -203,8 +203,9 @@ void Studio::deleteActionsLog() {
 
 }
 Studio::~Studio(){
-    if(open)
-        CloseAll().act(*this);
+    deleteTrainers();
+    deleteActionsLog();
+    workout_options.clear();
 }
 //copy constructor
 Studio::Studio(const Studio &stud): open(stud.open), num_of_trainers(stud.num_of_trainers){
@@ -232,7 +233,8 @@ Studio& Studio::operator=(const Studio &stud){
 //move assignment
 Studio& Studio::operator=(Studio &stud){
     if(this != &stud){
-        CloseAll().act(*this);
+        deleteTrainers();
+        deleteActionsLog();
         open = stud.open;
         num_of_trainers = stud.num_of_trainers;
         trainers = std::move(stud.trainers);
