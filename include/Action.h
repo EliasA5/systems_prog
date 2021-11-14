@@ -36,6 +36,7 @@ public:
     void act(Studio &studio);
     std::string toString() const;
     BaseAction* copy() const;
+    ~OpenTrainer();
 private:
     std::string toStr;
 	const int trainerId;

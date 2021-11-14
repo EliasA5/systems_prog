@@ -115,29 +115,14 @@ void Studio::start() {
             }
             OpenTrainer *action = new OpenTrainer(trainerId, customersList);
             action->act(*this);
-            if(action->getStatus() == ERROR){
-                for(int i = 0; i<customersList.size(); i++) {
-                    delete customersList[i];
-                    customersList[i] = nullptr;
-                    customerId--;
-                }
-                std::cout << "Trainer does not exist or is not open\n";
-            }
+            if(action->getStatus() == ERROR)
+                customerId -= customersList.size();
             actionsLog.push_back(action);
         }
         else if(command == "order"){
             int trainerId = std::stoi(args[1]);
             Order *action = new Order(trainerId);
             action->act(*this);
-            if(action->getStatus() == ERROR)
-                std::cout << "Trainer does not exist or is not open\n";
-            else{
-                std::stringstream strm;
-                Trainer *trainer = getTrainer(trainerId);
-                for(const auto& order: trainer->getOrders())
-                    strm << trainer->getCustomer(order.first)->getName() << " Is Doing " << order.second.getName() << "\n";
-                std::cout << strm.str();
-            }
             actionsLog.push_back(action);
         }
         else if(command == "move"){
@@ -146,16 +131,12 @@ void Studio::start() {
             int cus_id = std::stoi(args[3]);
             MoveCustomer *action = new MoveCustomer(trainerId, trainer_dst, cus_id);
             action->act(*this);
-            if(action->getStatus() == ERROR)
-                std::cout << "Cannot move customer\n";
             actionsLog.push_back(action);
         }
         else if(command == "close"){
             int trainerId = std::stoi(args[1]);
             Close *action = new Close(trainerId);
             action->act(*this);
-            if(action->getStatus() == ERROR)
-                std::cout << "Trainer does not exist or is not open\n";
             actionsLog.push_back(action);
         }
         else if(command == "closeall"){
@@ -185,8 +166,6 @@ void Studio::start() {
         else if(command == "restore"){
             RestoreStudio *action = new RestoreStudio();
             action->act(*this);
-            if(action->getStatus() == ERROR)
-                std::cout << "No backup available\n";
             actionsLog.push_back(action);
         }
         else{
@@ -241,7 +220,8 @@ Studio::Studio(Studio&& stud): open(stud.open), num_of_trainers(stud.num_of_trai
 //copy assignment
 Studio& Studio::operator=(const Studio &stud){
     if(this != &stud){
-        CloseAll().act(*this);
+        deleteTrainers();
+        deleteActionsLog();
         workout_options.clear();
         num_of_trainers = 0;
         open = false;

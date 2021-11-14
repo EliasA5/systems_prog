@@ -26,14 +26,16 @@ void OpenTrainer::act(Studio &studio) {
     Trainer* trainer = studio.getTrainer(trainerId);
     if(trainer == nullptr || trainer->isOpen()) {
         error("Workout session does not exist or is already open.\n");
+        std::cout << getErrorMsg();
         return;
     }
     if(trainer->getCustomers().size() + customers.size() > trainer->getCapacity()){
         error("Not enough spaces.\n");
+        std::cout << getErrorMsg();
         return;
     }
     for(const auto& customer : customers)
-        trainer->addCustomer(customer);
+        trainer->addCustomer(customer->copy());
     trainer->openTrainer();
 
     std::stringstream ss;
@@ -63,6 +65,14 @@ BaseAction* OpenTrainer::copy() const{
     }
     return new OpenTrainer(trainerId, customersList);
 }
+OpenTrainer::~OpenTrainer() {
+    for(int i = 0; i<customers.size(); i++)
+        if(customers[i] != nullptr){
+            delete customers[i];
+            customers[i] = nullptr;
+        }
+    customers.clear();
+}
 
 //order
 Order::Order(int id): trainerId(id){}
@@ -71,6 +81,7 @@ void Order::act(Studio &studio) {
     std::vector<Workout> workout_options = studio.getWorkoutOptions();
     if(trainer == nullptr || !trainer->isOpen()){
         error("Trainer does not exist or is not open\n");
+        std::cout << getErrorMsg();
         return;
     }
     std::vector<Customer*> customersList = trainer->getCustomers();
@@ -78,6 +89,10 @@ void Order::act(Studio &studio) {
         std::vector<int> workout_ids = customer->order(workout_options);
         trainer->order(customer->getId(), workout_ids, workout_options);
     }
+    std::stringstream strm;
+    for(const auto& order: trainer->getOrders())
+        strm << trainer->getCustomer(order.first)->getName() << " Is Doing " << order.second.getName() << "\n";
+    std::cout << strm.str();
     complete();
 }
 std::string Order::toString() const {
@@ -102,11 +117,13 @@ void MoveCustomer::act(Studio &studio) {
     Trainer* dst_trainer = studio.getTrainer(dstTrainer);
     if(src_trainer == nullptr || dst_trainer == nullptr){
         error("Cannot move customer\n");
+        std::cout << getErrorMsg();
         return;
     }
     Customer* customer = src_trainer->getCustomer(id);
     if(customer == nullptr || dst_trainer->getCustomers().size()+1 > dst_trainer->getCapacity()){
         error("Cannot move customer\n");
+        std::cout << getErrorMsg();
         return;
     }
     int salaryForCustomer = src_trainer->calSalaryForCustomer(id);
@@ -139,6 +156,7 @@ void Close::act(Studio &studio) {
     Trainer* trainer = studio.getTrainer(trainerId);
     if(trainer == nullptr || !trainer->isOpen()){
         error("Trainer does not exist or is not open\n");
+        std::cout << getErrorMsg();
         return;
     }
     trainer->incSalary();
@@ -256,6 +274,7 @@ RestoreStudio::RestoreStudio() {}
 void RestoreStudio::act(Studio &studio) {
     if(backup == nullptr){
         error("No backup available\n");
+        std::cout << getErrorMsg();
         return;
     }
     studio = *backup;
