@@ -21,6 +21,7 @@ public:
     void openTrainer();
     void closeTrainer();
     int getSalary();
+    int getCurrentSalary();
     bool isOpen();
     void incSalary();
     void incSalary(int val);

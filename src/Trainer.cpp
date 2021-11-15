@@ -60,6 +60,12 @@ void Trainer::closeTrainer(){
 int Trainer::getSalary(){
     return salary;
 }
+int Trainer::getCurrentSalary() {
+    int currSalary = getSalary();
+    for(const auto& curr_order : orderList)
+        currSalary += curr_order.second.getPrice();
+    return currSalary;
+}
 bool Trainer::isOpen(){
     return open;
 }
