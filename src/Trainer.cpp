@@ -12,14 +12,14 @@ void Trainer::addCustomer(Customer* customer){
     customersList.push_back(customer);
 }
 void Trainer::removeCustomer(int id){
-    for(int i = 0; i<customersList.size(); i++)
+    for(unsigned int i = 0; i<customersList.size(); i++)
         if (customersList[i]->getId() == id) {
             customersList.erase(customersList.begin() + i);
             i--;
             break;
         }
     std::vector<OrderPair> newList;
-    for(int i = 0; i<orderList.size(); i++) {
+    for(unsigned int i = 0; i<orderList.size(); i++) {
         if (orderList[i].first != id) {
             newList.push_back(orderList[i]);
         }
@@ -27,7 +27,7 @@ void Trainer::removeCustomer(int id){
     orderList = std::move(newList);
 }
 Customer* Trainer::getCustomer(int id){
-    for(int i = 0; i < customersList.size(); i++){
+    for(unsigned int i = 0; i < customersList.size(); i++){
         if(customersList[i]->getId() == id)
             return customersList[i];
     }
@@ -78,7 +78,7 @@ int Trainer::calSalaryForCustomer(int id) {
     return sal;
 }
 void Trainer::deleteCustomers() {
-    for(int i = 0; i < customersList.size(); i++){
+    for(unsigned int i = 0; i < customersList.size(); i++){
         delete customersList[i];
         customersList[i] = nullptr;
     }
@@ -92,9 +92,9 @@ Trainer::~Trainer() {deleteCustomers();}
 //copy constructor
 Trainer::Trainer(const Trainer &other): capacity(other.capacity), open(other.open), salary(other.salary){
     removeOrders();
-    for(int i = 0; i< other.orderList.size(); i++)
+    for(unsigned int i = 0; i< other.orderList.size(); i++)
         orderList.push_back(other.orderList[i]);
-    for(int i = 0; i<other.customersList.size(); i++){
+    for(unsigned int i = 0; i<other.customersList.size(); i++){
         customersList.push_back(other.customersList[i]->copy());
     }
 }
@@ -114,10 +114,10 @@ Trainer& Trainer::operator=(const Trainer &other){
         capacity = other.capacity;
         open = other.open;
         salary = other.salary;
-        for(int i = 0; i<other.customersList.size(); i++){
+        for(unsigned int i = 0; i<other.customersList.size(); i++){
             customersList[i] = other.customersList[i]->copy();
         }
-        for(int i = 0; i< other.orderList.size(); i++)
+        for(unsigned int i = 0; i< other.orderList.size(); i++)
             orderList.push_back(other.orderList[i]);
     }
     return *this;

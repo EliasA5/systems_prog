@@ -60,13 +60,13 @@ std::string OpenTrainer::toString() const{
 }
 BaseAction* OpenTrainer::copy() const{
     std::vector<Customer *> customersList;
-    for(int i = 0; i<customers.size(); i++){
+    for(unsigned int i = 0; i<customers.size(); i++){
         customersList.push_back(customers[i]->copy());
     }
     return new OpenTrainer(trainerId, customersList);
 }
 OpenTrainer::~OpenTrainer() {
-    for(int i = 0; i<customers.size(); i++)
+    for(unsigned int i = 0; i<customers.size(); i++)
         if(customers[i] != nullptr){
             delete customers[i];
             customers[i] = nullptr;
@@ -75,7 +75,7 @@ OpenTrainer::~OpenTrainer() {
 }
 OpenTrainer::OpenTrainer(const OpenTrainer &other): trainerId(other.trainerId){
     toStr = other.toStr;
-    for(int i = 0; i < other.customers.size(); i++)
+    for(unsigned int i = 0; i < other.customers.size(); i++)
         customers.push_back(other.customers[i]->copy());
     if(other.getStatus() == ERROR)
         error(other.getErrorMsg());
@@ -201,7 +201,7 @@ BaseAction* Close::copy() const{
 //closeALL
 CloseAll::CloseAll() {}
 void CloseAll::act(Studio &studio) {
-    for(int i = 0; i < studio.getNumOfTrainers(); i++){
+    for(unsigned int i = 0; i < studio.getNumOfTrainers(); i++){
         Close(i).act(studio);
     }
     studio.deleteTrainers();

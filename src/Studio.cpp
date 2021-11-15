@@ -67,11 +67,6 @@ void Studio::start() {
         return;
     open = true;
     std::cout << "Studio is now open!\n";
-//    for(const auto& trainer : trainers) {
-//        std::cout << trainer->getCapacity() << "\n";
-//    }
-//    for(const auto& work : workout_options)
-//        std::cout << "name:" << work.getName() << ", type: " << work.getType() << ", price:" << work.getPrice() << "\n";
     int customerId = 0;
     std::string line;
     //FIXME on windows \r gets added to end of line, check on linux
@@ -90,7 +85,7 @@ void Studio::start() {
         if(command == "open"){
             int trainerId = std::stoi(args[1]);
             std::vector<Customer *> customersList;
-            for(int i = 2; i<args.size(); i++){
+            for(unsigned int i = 2; i<args.size(); i++){
                 int delim = args[i].find(',');
                 std::string name = args[i].substr(0, delim);
                 std::string type_name = args[i].substr(delim+1);
@@ -191,7 +186,7 @@ std::vector<Workout>& Studio::getWorkoutOptions(){
 }
 
 void Studio::deleteActionsLog() {
-    for(int i =0; i<actionsLog.size(); i++)
+    for(unsigned int i =0; i<actionsLog.size(); i++)
         if(actionsLog[i] != nullptr) {
             delete actionsLog[i];
             actionsLog[i] = nullptr;
@@ -249,14 +244,14 @@ void Studio::copy(const bool &_open, const int &_num_of_trainers, const std::vec
     for(int i = 0; i<_num_of_trainers; i++){
         trainers.push_back(new Trainer(*_trainers[i]));
     }
-    for(int i = 0; i< _workout_options.size(); i++)
+    for(unsigned int i = 0; i< _workout_options.size(); i++)
         workout_options.push_back(_workout_options[i]);
-    for(int i = 0; i<_actionsLog.size(); i++)
+    for(unsigned int i = 0; i<_actionsLog.size(); i++)
         actionsLog.push_back(_actionsLog[i]->copy());
 }
 
 void Studio::deleteTrainers(){
-    for(int i = 0; i<trainers.size(); i++)
+    for(unsigned int i = 0; i<trainers.size(); i++)
         if(trainers[i] != nullptr){
             delete trainers[i];
             trainers[i] = nullptr;
