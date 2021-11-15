@@ -202,7 +202,19 @@ BaseAction* Close::copy() const{
 CloseAll::CloseAll() {}
 void CloseAll::act(Studio &studio) {
     for(int i = 0; i < studio.getNumOfTrainers(); i++){
-        Close(i).act(studio);
+        Trainer* trainer = studio.getTrainer(i);
+        if(trainer == nullptr){
+            continue;
+        }
+        else if(!trainer->isOpen()){
+            std::cout << "Trainer " << i << " closed. " << "Salary " << trainer->getSalary() << "NIS\n";
+            continue;
+        }
+        trainer->incSalary();
+        trainer->removeOrders();
+        trainer->closeTrainer();
+        std::cout << "Trainer " << i << " closed. " << "Salary " << trainer->getSalary() << "NIS\n";
+        trainer->deleteCustomers();
     }
     studio.deleteTrainers();
     studio.deleteActionsLog();
@@ -248,7 +260,7 @@ void PrintTrainerStatus::act(Studio &studio) {
     std::cout << "Orders:\n";
     for(const auto& order : trainer->getOrders())
         std::cout << order.second.getName() << " " << order.second.getPrice() << "NIS " << order.first << "\n";
-    std::cout << "Current Trainer’s Salary: " << trainer->getSalary() << "\n";
+    std::cout << "Current Trainer’s Salary: " << trainer->getCurrentSalary() << "NIS\n";
     complete();
 }
 std::string PrintTrainerStatus::toString() const{
