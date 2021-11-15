@@ -245,10 +245,7 @@ std::string CloseAll::toString() const {
 }
 BaseAction* CloseAll::copy() const{
     CloseAll *other = new CloseAll();
-    if(getStatus() == ERROR)
-        other->error(getErrorMsg());
-    else
-        other->complete();
+    other->complete();
     return other;
 }
 //PrintWorkoutOptions
@@ -265,10 +262,7 @@ std::string PrintWorkoutOptions::toString() const{
 }
 BaseAction* PrintWorkoutOptions::copy() const{
     PrintWorkoutOptions *other = new PrintWorkoutOptions();
-    if(getStatus() == ERROR)
-        other->error(getErrorMsg());
-    else
-        other->complete();
+    other->complete();
     return other;
 }
 //PrintTrainerStatus
@@ -298,10 +292,7 @@ std::string PrintTrainerStatus::toString() const{
 }
 BaseAction* PrintTrainerStatus::copy() const{
     PrintTrainerStatus *other = new PrintTrainerStatus(trainerId);
-    if(getStatus() == ERROR)
-        other->error(getErrorMsg());
-    else
-        other->complete();
+    other->complete();
     return other;
 }
 
@@ -318,10 +309,7 @@ std::string PrintActionsLog::toString() const {
 }
 BaseAction* PrintActionsLog::copy() const{
     PrintActionsLog *other = new PrintActionsLog();
-    if(getStatus() == ERROR)
-        other->error(getErrorMsg());
-    else
-        other->complete();
+    other->complete();
     return other;
 }
 BackupStudio::BackupStudio() {}
@@ -338,10 +326,7 @@ std::string BackupStudio::toString() const {
 }
 BaseAction* BackupStudio::copy() const{
     BackupStudio *other = new BackupStudio();
-    if(getStatus() == ERROR)
-        other->error(getErrorMsg());
-    else
-        other->complete();
+    other->complete();
     return other;
 }
 
