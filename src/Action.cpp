@@ -1,6 +1,6 @@
 #include "Action.h"
 #include "Studio.h"
-#include <sstream>
+
 extern Studio* backup;
 BaseAction::BaseAction() {}
 

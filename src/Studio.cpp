@@ -1,7 +1,4 @@
 #include "Studio.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 Studio::Studio(): open(false){}
 

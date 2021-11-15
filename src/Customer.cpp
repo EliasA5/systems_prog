@@ -1,9 +1,5 @@
 #include "Customer.h"
 
-#include <map>
-
-
-
 //Customer constructor
 Customer::Customer(std::string c_name, int c_id):name(c_name),id(c_id){};
 //Customer name getter

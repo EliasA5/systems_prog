@@ -6,6 +6,8 @@
 #include "Workout.h"
 #include "Trainer.h"
 #include "Action.h"
+#include <iostream>
+#include <fstream>
 
 
 class Studio{		

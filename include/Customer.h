@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Workout.h"
+#include <map>
 
 class Customer{
 public:

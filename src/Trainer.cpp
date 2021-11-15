@@ -1,5 +1,5 @@
 #include "Trainer.h"
-#include <algorithm>
+
 
 typedef std::pair<int, Workout> OrderPair;
 
