@@ -29,7 +29,7 @@ void OpenTrainer::act(Studio &studio) {
         std::cout << getErrorMsg();
         return;
     }
-    if(trainer->getCustomers().size() + customers.size() > trainer->getCapacity()){
+    if(trainer->getCustomers().size() + customers.size() > (unsigned)trainer->getCapacity()){
         error("Not enough spaces.\n");
         std::cout << getErrorMsg();
         return;
@@ -138,7 +138,7 @@ void MoveCustomer::act(Studio &studio) {
         return;
     }
     Customer* customer = src_trainer->getCustomer(id);
-    if(customer == nullptr || dst_trainer->getCustomers().size()+1 > dst_trainer->getCapacity()){
+    if(customer == nullptr || dst_trainer->getCustomers().size()+1 > (unsigned)dst_trainer->getCapacity()){
         error("Cannot move customer\n");
         std::cout << getErrorMsg();
         return;
@@ -201,7 +201,7 @@ BaseAction* Close::copy() const{
 //closeALL
 CloseAll::CloseAll() {}
 void CloseAll::act(Studio &studio) {
-    for(unsigned int i = 0; i < studio.getNumOfTrainers(); i++){
+    for(int i = 0; i < studio.getNumOfTrainers(); i++){
         Close(i).act(studio);
     }
     studio.deleteTrainers();

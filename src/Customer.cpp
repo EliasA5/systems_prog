@@ -86,7 +86,6 @@ std::vector<int> FullBodyCustomer::order(const std::vector<Workout> &workout_opt
     std::vector<int> ordersId;
     int minA,maxM,minC,idA,idM,idC;
     bool firstA=true,firstM= true,firstC=true;
-    WorkoutType type;
 
     for(const auto& currentWorkout : workout_options){
         switch(currentWorkout.getType()){
