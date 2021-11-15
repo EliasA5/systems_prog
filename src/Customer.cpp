@@ -67,7 +67,7 @@ std::vector<int> HeavyMuscleCustomer::order(const std::vector<Workout> &workout_
             m.insert(std::make_pair(currentWorkout.getPrice(),currentWorkout.getId()));
     for (std::map<int, int>::iterator itr = m.begin(); itr != m.end(); itr++)
         orders.push_back(itr->second);
-    for (unsigned int i = orders.size()-1 ; i >= 0; i--)
+    for (int i = orders.size()-1 ; i >= 0; i--)
         ordersId.push_back(orders.at(i));
     return ordersId;
 }
