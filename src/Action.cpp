@@ -63,7 +63,12 @@ BaseAction* OpenTrainer::copy() const{
     for(unsigned int i = 0; i<customers.size(); i++){
         customersList.push_back(customers[i]->copy());
     }
-    return new OpenTrainer(trainerId, customersList);
+    OpenTrainer *other = new OpenTrainer(trainerId, customersList);
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 OpenTrainer::~OpenTrainer() {
     for(unsigned int i = 0; i<customers.size(); i++)
@@ -113,8 +118,8 @@ void Order::act(Studio &studio) {
     complete();
 }
 std::string Order::toString() const {
-    std::stringstream ss("order ");
-    ss << trainerId << " ";
+    std::stringstream ss;
+    ss << "order " << trainerId << " ";
     if(getStatus() == ERROR){
         ss << getErrorMsg();
         return ss.str();
@@ -125,7 +130,12 @@ std::string Order::toString() const {
     }
 }
 BaseAction* Order::copy() const{
-    return new Order(trainerId);
+    Order *other = new Order(trainerId);
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 
 MoveCustomer::MoveCustomer(int src, int dst, int customerId): srcTrainer(src), dstTrainer(dst), id(customerId) {}
@@ -165,7 +175,12 @@ std::string MoveCustomer::toString() const {
     }
 }
 BaseAction* MoveCustomer::copy() const{
-    return new MoveCustomer(srcTrainer, dstTrainer, id);
+    MoveCustomer *other = new MoveCustomer(srcTrainer, dstTrainer, id);
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 
 Close::Close(int id): trainerId(id){}
@@ -196,7 +211,12 @@ std::string Close::toString() const {
     }
 }
 BaseAction* Close::copy() const{
-    return new Close(trainerId);
+    Close *other = new Close(trainerId);
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 //closeALL
 CloseAll::CloseAll() {}
@@ -224,7 +244,12 @@ std::string CloseAll::toString() const {
     return "CloseAll Completed\n";
 }
 BaseAction* CloseAll::copy() const{
-    return new CloseAll();
+    CloseAll *other = new CloseAll();
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 //PrintWorkoutOptions
 PrintWorkoutOptions::PrintWorkoutOptions() {}
@@ -239,7 +264,12 @@ std::string PrintWorkoutOptions::toString() const{
     return "PrintWorkoutOptions Completed\n";
 }
 BaseAction* PrintWorkoutOptions::copy() const{
-    return new PrintWorkoutOptions();
+    PrintWorkoutOptions *other = new PrintWorkoutOptions();
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 //PrintTrainerStatus
 PrintTrainerStatus::PrintTrainerStatus(int id): trainerId(id) {}
@@ -267,7 +297,12 @@ std::string PrintTrainerStatus::toString() const{
     return "PrintTrainerStatus Completed\n";
 }
 BaseAction* PrintTrainerStatus::copy() const{
-    return new PrintTrainerStatus(trainerId);
+    PrintTrainerStatus *other = new PrintTrainerStatus(trainerId);
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 
 PrintActionsLog::PrintActionsLog() {}
@@ -276,12 +311,18 @@ void PrintActionsLog::act(Studio &studio) {
         std::string s = action->toString();
         std::cout << s;
     }
+    complete();
 }
 std::string PrintActionsLog::toString() const {
     return "PrintActionsLog Completed\n";
 }
 BaseAction* PrintActionsLog::copy() const{
-    return new PrintActionsLog();
+    PrintActionsLog *other = new PrintActionsLog();
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 BackupStudio::BackupStudio() {}
 void BackupStudio::act(Studio &studio) {
@@ -296,7 +337,12 @@ std::string BackupStudio::toString() const {
     return "Studio Backed Up Completed\n";
 }
 BaseAction* BackupStudio::copy() const{
-    return new BackupStudio();
+    BackupStudio *other = new BackupStudio();
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 
 RestoreStudio::RestoreStudio() {}
@@ -321,7 +367,12 @@ std::string RestoreStudio::toString() const {
     }
 }
 BaseAction* RestoreStudio::copy() const{
-    return new RestoreStudio();
+    RestoreStudio *other = new RestoreStudio();
+    if(getStatus() == ERROR)
+        other->error(getErrorMsg());
+    else
+        other->complete();
+    return other;
 }
 
 
