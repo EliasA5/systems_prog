@@ -105,10 +105,18 @@ void Studio::start() {
                 customersList.push_back(cus);
                 customerId++;
             }
+            Trainer *trainer = getTrainer(trainerId);
+            int trainerStartSize = 0;
+            if(trainer != nullptr)
+                trainerStartSize = trainer->getCustomers().size();
             OpenTrainer *action = new OpenTrainer(trainerId, customersList);
             action->act(*this);
             if(action->getStatus() == ERROR)
                 customerId -= customersList.size();
+            else {
+                int customersAdded = trainer->getCustomers().size() - trainerStartSize;
+                customerId -= (customersList.size() - customersAdded);
+            }
             actionsLog.push_back(action);
         }
         else if(command == "order"){

@@ -29,13 +29,16 @@ void OpenTrainer::act(Studio &studio) {
         std::cout << getErrorMsg();
         return;
     }
-    if(trainer->getCustomers().size() + customers.size() > (unsigned)trainer->getCapacity()){
-        error("Not enough spaces.\n");
-        std::cout << getErrorMsg();
-        return;
-    }
-    for(const auto& customer : customers)
-        trainer->addCustomer(customer->copy());
+//    if(trainer->getCustomers().size() + customers.size() > (unsigned)trainer->getCapacity()){
+//        error("Not enough spaces.\n");
+//        std::cout << getErrorMsg();
+//        return;
+//    }
+//    for(const auto& customer : customers)
+//        trainer->addCustomer(customer->copy());
+    int startSize = trainer->getCustomers().size();
+    for(int i = startSize; i < trainer->getCapacity() && (i - startSize) < customers.size(); i++)
+        trainer->addCustomer(customers[i-startSize]->copy());
     trainer->openTrainer();
 
     std::stringstream ss;
