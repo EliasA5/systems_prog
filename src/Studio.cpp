@@ -173,7 +173,7 @@ int Studio::getNumOfTrainers() const{
 }
 
 Trainer* Studio::getTrainer(int tid){
-    if(tid > getNumOfTrainers() || tid < 0)
+    if(tid >= getNumOfTrainers() || tid < 0)
         return nullptr;
     return trainers[tid];
 }

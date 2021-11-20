@@ -337,7 +337,7 @@ void RestoreStudio::act(Studio &studio) {
         std::cout << getErrorMsg();
         return;
     }
-    studio = *backup;
+    studio = (const Studio) *backup;
     complete();
 }
 std::string RestoreStudio::toString() const {
