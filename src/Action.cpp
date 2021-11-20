@@ -166,8 +166,8 @@ void MoveCustomer::act(Studio &studio) {
     complete();
 }
 std::string MoveCustomer::toString() const {
-    std::stringstream ss("move ");
-    ss << srcTrainer << " " << dstTrainer << " " << id << " ";
+    std::stringstream ss;
+    ss << "move " << srcTrainer << " " << dstTrainer << " " << id << " ";
     if(getStatus() == ERROR){
         ss << getErrorMsg();
         return ss.str();
@@ -202,8 +202,8 @@ void Close::act(Studio &studio) {
     complete();
 }
 std::string Close::toString() const {
-    std::stringstream ss("close ");
-    ss << trainerId << " ";
+    std::stringstream ss;
+    ss << "close " << trainerId << " ";
     if(getStatus() == ERROR){
         ss << getErrorMsg();
         return ss.str();
@@ -344,7 +344,8 @@ void RestoreStudio::act(Studio &studio) {
     complete();
 }
 std::string RestoreStudio::toString() const {
-    std::stringstream ss("restore ");
+    std::stringstream ss;
+    ss << "restore ";
     if(getStatus() == ERROR){
         ss << getErrorMsg();
         return ss.str();
