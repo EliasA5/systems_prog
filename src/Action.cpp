@@ -325,7 +325,7 @@ void BackupStudio::act(Studio &studio) {
     complete();
 }
 std::string BackupStudio::toString() const {
-    return "Studio Backed Up Completed\n";
+    return "backup Completed\n";
 }
 BaseAction* BackupStudio::copy() const{
     BackupStudio *other = new BackupStudio();
