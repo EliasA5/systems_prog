@@ -44,7 +44,12 @@ void Trainer::order(const int customer_id, const std::vector<int> workout_ids, c
     for(const auto& work_id: workout_ids){
         for(const auto& work_out: workout_options){
             if(work_out.getId() == work_id) {
-                orderList.push_back(std::make_pair(customer_id, work_out));
+                bool insert = true;
+                for(const auto& ord : orderList)
+                    if(ord.first == customer_id && ord.second.getId() == work_id)
+                       insert = false;
+                if(insert)
+                    orderList.push_back(std::make_pair(customer_id, work_out));
                 break;
             }
         }
