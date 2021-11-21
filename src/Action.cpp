@@ -40,18 +40,14 @@ void OpenTrainer::act(Studio &studio) {
     for(int i = startSize; i < trainer->getCapacity() && (i - startSize) < customers.size(); i++)
         trainer->addCustomer(customers[i-startSize]->copy());
     trainer->openTrainer();
-
+    complete();
+}
+std::string OpenTrainer::toString() const{
     std::stringstream ss;
     ss << "open " << trainerId << " ";
     for(const auto& customer : customers){
         ss << customer->getName() << "," << customer->toString() << " ";
     }
-    toStr = ss.str();
-    complete();
-}
-std::string OpenTrainer::toString() const{
-    std::stringstream ss;
-    ss << toStr;
     if(getStatus() == ERROR){
         ss << getErrorMsg();
         return ss.str();
@@ -82,7 +78,6 @@ OpenTrainer::~OpenTrainer() {
     customers.clear();
 }
 OpenTrainer::OpenTrainer(const OpenTrainer &other): trainerId(other.trainerId){
-    toStr = other.toStr;
     for(unsigned int i = 0; i < other.customers.size(); i++)
         customers.push_back(other.customers[i]->copy());
     if(other.getStatus() == ERROR)
@@ -91,7 +86,6 @@ OpenTrainer::OpenTrainer(const OpenTrainer &other): trainerId(other.trainerId){
         complete();
 }
 OpenTrainer::OpenTrainer(OpenTrainer&& other): trainerId(other.trainerId){
-    toStr = other.toStr;
     customers = std::move(other.customers);
     if(other.getStatus() == ERROR)
         error(other.getErrorMsg());
@@ -145,7 +139,7 @@ MoveCustomer::MoveCustomer(int src, int dst, int customerId): srcTrainer(src), d
 void MoveCustomer::act(Studio &studio) {
     Trainer* src_trainer = studio.getTrainer(srcTrainer);
     Trainer* dst_trainer = studio.getTrainer(dstTrainer);
-    if(src_trainer == nullptr || dst_trainer == nullptr){
+    if(src_trainer == nullptr || dst_trainer == nullptr || !src_trainer->isOpen() || !dst_trainer->isOpen()){
         error("Cannot move customer\n");
         std::cout << getErrorMsg();
         return;

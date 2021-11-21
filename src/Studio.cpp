@@ -160,8 +160,8 @@ void Studio::start() {
         }
         else if(command == "backup"){
             BackupStudio *action = new BackupStudio();
-            action->act(*this);
             actionsLog.push_back(action);
+            action->act(*this);
         }
         else if(command == "restore"){
             RestoreStudio *action = new RestoreStudio();

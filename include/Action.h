@@ -44,7 +44,6 @@ public:
     OpenTrainer(OpenTrainer&& other);
 
 private:
-    std::string toStr;
 	const int trainerId;
 	std::vector<Customer *> customers;
 };
