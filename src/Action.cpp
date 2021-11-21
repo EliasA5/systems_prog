@@ -230,7 +230,6 @@ void CloseAll::act(Studio &studio) {
             continue;
         }
         else if(!trainer->isOpen()){
-            std::cout << "Trainer " << i << " closed. " << "Salary " << trainer->getSalary() << "NIS\n";
             continue;
         }
         trainer->incSalary();
