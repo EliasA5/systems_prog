@@ -18,12 +18,15 @@ public class GPU {
         switch(type){
             case RTX3090:
                 timeToTrain = 1;
+                maxNumOfBatches = 32;
                 break;
             case RTX2080:
                 timeToTrain = 2;
+                maxNumOfBatches = 16;
                 break;
             case GTX1080:
                 timeToTrain = 4;
+                maxNumOfBatches = 8;
                 break;
         }
     }
@@ -39,11 +42,17 @@ public class GPU {
     public Type getType(){
         return type;
     }
-    public void runService(){
-        service.run();
+    public boolean runService(){
+        Thread t = new Thread(service);
+        try{t.start();}
+        catch(Exception e) {return false;}
+        return true;
     }
+
     enum Type {RTX3090, RTX2080, GTX1080}
     private int timeToTrain;
+    private int numOfBatches;
+    private int maxNumOfBatches;
     private Model model;
     private Cluster cluster;
     private Type type;

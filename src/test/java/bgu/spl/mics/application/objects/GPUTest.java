@@ -27,13 +27,22 @@ class GPUTest {
 
     @Test
     void getModel() {
+        Model mod = new Model();
+        assertNull(gpu0.getModel());
+        gpu0.setModel(mod);
+        assertEquals(gpu0.getModel(), mod);
     }
 
     @Test
     void getType() {
+        assertEquals(gpu0.getType().name(), "RTX3090");
+        assertEquals(gpu1.getType().name(), "RTX2080");
+        assertEquals(gpu2.getType().name(), "GTX1080");
     }
 
     @Test
-    void runService() {
+    void runService(){
+        assertTrue(gpu0.runService());
     }
+
 }
