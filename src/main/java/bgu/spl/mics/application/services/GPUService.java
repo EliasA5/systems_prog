@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
-
+import bgu.spl.mics.application.objects.GPU;
 /**
  * GPU service is responsible for handling the
  * {@link TrainModelEvent} and {@link TestModelEvent},
@@ -12,7 +12,7 @@ import bgu.spl.mics.MicroService;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class GPUService extends MicroService {
-
+    GPU gpu;
     public GPUService(String name) {
         super("Change_This_Name");
         // TODO Implement this
