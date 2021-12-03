@@ -1,6 +1,5 @@
 package bgu.spl.mics;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ class FutureTest {
     Future<Integer> fut;
     @BeforeEach
     void setUp() {
-        fut = new Future<Integer>();
+        fut = new Future<>();
     }
 
     @Test
