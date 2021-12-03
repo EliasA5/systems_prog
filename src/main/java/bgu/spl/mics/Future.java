@@ -42,9 +42,8 @@ public class Future<T> {
 	/**
      * @return true if this object has been resolved, false otherwise
      */
-	public boolean isDone() {
-		//TODO: implement this.
-		return false;
+	public synchronized boolean isDone() {
+		return done;
 	}
 	
 	/**
