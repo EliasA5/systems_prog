@@ -12,7 +12,7 @@ public class MessageBusImpl implements MessageBus {
 	public static MessageBusImpl getInstance(){
 		return MessageBusImplSingleton.instance;
 	}
-	private MessageBusImpl(){};
+	private MessageBusImpl(){}
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		// TODO Auto-generated method stub

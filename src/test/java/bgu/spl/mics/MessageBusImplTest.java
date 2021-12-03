@@ -130,7 +130,9 @@ class MessageBusImplTest {
         try{
             assertEquals(bus.awaitMessage(handler), event);
         }
-        catch(InterruptedException e){}
+        catch(InterruptedException e){
+            return;
+        }
 
         bus.unregister(handler);
         bus.sendEvent(event);
@@ -139,7 +141,7 @@ class MessageBusImplTest {
         }
         catch(InterruptedException e){}
         catch(IllegalStateException e){
-            assertEquals(true,true);
+            assertTrue(true);
             return;
         }
         assertEquals(true, false);
