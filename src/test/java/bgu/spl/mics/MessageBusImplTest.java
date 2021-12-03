@@ -5,22 +5,23 @@ import bgu.spl.mics.example.messages.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import junit.framework.TestCase;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MessageBusImplTest {
+public class MessageBusImplTest extends TestCase{
     MessageBusImpl bus;
     ExampleEventHandlerService handler;
     ExampleBroadcastListenerService handlerB;
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         bus = MessageBusImpl.getInstance();
         ExampleEventHandlerService handler = new ExampleEventHandlerService("handler", new String[]{"1"});
         ExampleBroadcastListenerService handlerB = new ExampleBroadcastListenerService("handlerB", new String[]{"1"});
     }
 
     @Test
-    void subscribeEvent() {
+    public void subscribeEvent() {
         assertFalse(bus.isSubscribedEvent(ExampleEvent.class, handler));
         bus.register(handler);
         bus.subscribeEvent(ExampleEvent.class, handler);
@@ -28,7 +29,7 @@ class MessageBusImplTest {
     }
 
     @Test
-    void subscribeBroadcast() {
+    public void subscribeBroadcast() {
         assertFalse(bus.isSubscribedBroadcast(ExampleBroadcast.class, handlerB));
         bus.register(handlerB);
         bus.subscribeBroadcast(ExampleBroadcast.class, handlerB);
@@ -36,7 +37,7 @@ class MessageBusImplTest {
     }
 
     @Test
-    void complete() {
+    public void complete() {
         ExampleEvent event = new ExampleEvent("tester");
         Future<String> res = bus.sendEvent(event);
         assertFalse(res.isDone());
@@ -46,7 +47,7 @@ class MessageBusImplTest {
     }
 
     @Test
-    void sendBroadcast() {
+    public void sendBroadcast() {
         bus.register(handlerB);
         bus.subscribeBroadcast(ExampleBroadcast.class, handlerB);
         ExampleBroadcast broadcast = new ExampleBroadcast("1"){};
@@ -59,7 +60,7 @@ class MessageBusImplTest {
     }
 
     @Test
-    void sendEvent() {
+    public void sendEvent() {
         bus.register(handlerB);
         bus.subscribeEvent(ExampleEvent.class, handlerB);
         ExampleEvent event = new ExampleEvent("1"){};
@@ -72,14 +73,14 @@ class MessageBusImplTest {
     }
 
     @Test
-    void register(){
+    public void register(){
         assertFalse(bus.isRegistered(handler));
         bus.register(handler);
         assertTrue(bus.isRegistered(handler));
     }
 
     @Test
-    void unregister() {
+    public void unregister() {
         bus.register(handler);
         assertTrue(bus.isRegistered(handler));
         bus.unregister(handler);
@@ -87,7 +88,7 @@ class MessageBusImplTest {
     }
 
     @Test
-    void awaitMessage() {
+    public void awaitMessage() {
         bus.register(handler);
         bus.subscribeEvent(ExampleEvent.class, handler);
         ExampleEvent event = new ExampleEvent("1"){};
@@ -115,7 +116,7 @@ class MessageBusImplTest {
         assertFalse(true);
     }
     @AfterEach
-    void tearDown(){
+    public void tearDown(){
         bus.unregister(handler);
         bus.unregister(handlerB);
     }

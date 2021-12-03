@@ -2,20 +2,21 @@ package bgu.spl.mics;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import junit.framework.TestCase;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FutureTest {
+public class FutureTest extends TestCase{
     Future<Integer> fut;
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         fut = new Future<>();
     }
 
     @Test
-    void get() {
+    public void get() {
         assertFalse(fut.isDone());
         fut.resolve(1);
         fut.get();
@@ -23,22 +24,22 @@ class FutureTest {
     }
 
     @Test
-    void resolve() {
+    public void resolve() {
         assertFalse(fut.isDone());
         fut.resolve(1);
         assertTrue(fut.isDone());
-        assertEquals(1, fut.get());
+        assertEquals(1, (int)fut.get());
     }
 
     @Test
-    void isDone() {
+    public void isDone() {
         assertFalse(fut.isDone());
         fut.resolve(1);
         assertTrue(fut.isDone());
     }
 
     @Test
-    void testGet() {
+    public void testGet() {
         assertFalse(fut.isDone());
         assertNull(fut.get(100, TimeUnit.MILLISECONDS));
         fut.resolve(1);
