@@ -6,11 +6,10 @@ package bgu.spl.mics;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	private static class MessageBusImplSingleton{
-		private static final MessageBusImpl instance = new MessageBusImpl();
-	}
+	private static final MessageBusImpl instance = new MessageBusImpl();
+
 	public static MessageBusImpl getInstance(){
-		return MessageBusImplSingleton.instance;
+		return instance;
 	}
 	private MessageBusImpl(){}
 	@Override
@@ -61,7 +60,19 @@ public class MessageBusImpl implements MessageBus {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public <T> boolean isSubscribedEvent(Class<? extends Event<T>> type, MicroService m){
+		return false;
+	}
 
-	
+	@Override
+	public boolean isSubscribedBroadcast(Class<? extends Broadcast> type, MicroService m){
+		return false;
+	}
+
+	@Override
+	public boolean isRegistered(MicroService m){
+		return false;
+	}
 
 }

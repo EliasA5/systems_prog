@@ -42,7 +42,9 @@ class GPUTest {
 
     @Test
     void runService(){
-        assertTrue(gpu0.runService());
+        assertFalse(gpu0.isRunning());
+        gpu0.runService();
+        assertTrue(gpu0.isRunning());
     }
 
 }

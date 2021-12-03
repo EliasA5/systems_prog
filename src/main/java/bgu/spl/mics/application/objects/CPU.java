@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.objects;
 
 import bgu.spl.mics.application.services.CPUService;
-import java.util.Vector;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Passive object representing a single CPU.
@@ -12,28 +12,36 @@ public class CPU {
 
     public CPU(int numOfCores){
         coresNum = numOfCores;
-        CPUdata = new Vector<>();
+        CPUdata = new ArrayBlockingQueue<DataBatch>(1);
         cluster = Cluster.getInstance();
-        service = new CPUService(Integer.toString(coresNum));
+        serviceThread = new Thread(new CPUService(Integer.toString(coresNum)));
     }
 
     public int getCoresNum(){
         return coresNum;
     }
 
-    public Vector<DataBatch> getCPUdata(){
-        return CPUdata;
+    public DataBatch getCPUdata(){
+        try{return CPUdata.take();}
+        catch(InterruptedException e){
+            return null;
+        }
     }
-
+    public DataBatch peekCPUdata(){
+        return CPUdata.peek();
+    }
     public void setData(DataBatch data){
-        //TODO: choose container
-        CPUdata = new Vector<>();
+        CPUdata.add(data);
     }
     public void runService(){
-        service.run();
+        serviceThread.start();
+    }
+
+    public boolean isRunning(){
+        return serviceThread.isAlive();
     }
     private int coresNum;
-    private Vector<DataBatch> CPUdata; //Databatch
+    private ArrayBlockingQueue<DataBatch> CPUdata; //Databatch
     private Cluster cluster;
-    private CPUService service;
+    private Thread serviceThread;
 }

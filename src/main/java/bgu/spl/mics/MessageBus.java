@@ -93,5 +93,8 @@ public interface MessageBus {
      *                              to became available.
      */
     Message awaitMessage(MicroService m) throws InterruptedException;
-    
+
+    <T> boolean isSubscribedEvent(Class<? extends Event<T>> type, MicroService m);
+    boolean isSubscribedBroadcast(Class<? extends Broadcast> type, MicroService m);
+    boolean isRegistered(MicroService m);
 }
