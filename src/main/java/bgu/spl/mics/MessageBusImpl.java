@@ -27,8 +27,8 @@ public class MessageBusImpl implements MessageBus {
 	}
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		// TODO Auto-generated method stub
-
+		//TODO: check on the case where m is unregistered
+		Events.computeIfAbsent(type, k -> new ConcurrentLinkedQueue<>()).add(m);
 	}
 
 	@Override
@@ -85,6 +85,7 @@ public class MessageBusImpl implements MessageBus {
 			throw new IllegalStateException();
 		return mServiceMessageQueues.get(m).take();
 	}
+
 	@Override
 	public <T> boolean isSubscribedEvent(Class<? extends Event<T>> type, MicroService m){
 		return Events.get(type).contains(m);
