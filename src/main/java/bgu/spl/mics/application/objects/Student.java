@@ -18,4 +18,37 @@ public class Student {
     private int publications;
     private int papersRead;
 
+    public Student(String _name, String _department, String _status){
+        name = _name;
+        department = _department;
+        status = Degree.valueOf(_status);
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public String getDepartment(){
+        return department;
+    }
+
+    public Degree getStatus(){
+        return status;
+    }
+
+    public int getPublications(){
+        return publications;
+    }
+
+    public int getPapersRead(){
+        return papersRead;
+    }
+
+    public void incPublications(){
+        publications++;
+    }
+    public void incPapersRead(Student other){
+        if(other != this)
+            papersRead++;
+    }
 }
