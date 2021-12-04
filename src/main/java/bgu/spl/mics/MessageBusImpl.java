@@ -15,6 +15,7 @@ public class MessageBusImpl implements MessageBus {
 	private final ConcurrentHashMap<Class<? extends Event<?>>, ConcurrentLinkedQueue<MicroService>> Events;
 	private final ConcurrentHashMap<Event<?>, Future> eventFutures;
 	private final ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> mServiceMessageQueues;
+	private final ConcurrentHashMap<MicroService, Boolean> isRegisteredMap;
 
 	public static MessageBusImpl getInstance(){
 		return instance;
@@ -24,17 +25,18 @@ public class MessageBusImpl implements MessageBus {
 		Events = new ConcurrentHashMap<>();
 		eventFutures = new ConcurrentHashMap<>();
 		mServiceMessageQueues = new ConcurrentHashMap<>();
+		isRegisteredMap = new ConcurrentHashMap<>();
 	}
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		//TODO: check on the case where m is unregistered
-		Events.computeIfAbsent(type, k -> new ConcurrentLinkedQueue<>()).add(m);
+		if(isRegistered(m))
+			Events.computeIfAbsent(type, k -> new ConcurrentLinkedQueue<>()).add(m);
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		//TODO: check on the case where m is unregistered
-		broadCasts.computeIfAbsent(type, k -> new ConcurrentLinkedQueue<>()).add(m);
+		if(isRegistered(m))
+			broadCasts.computeIfAbsent(type, k -> new ConcurrentLinkedQueue<>()).add(m);
 	}
 
 	@Override
@@ -60,6 +62,8 @@ public class MessageBusImpl implements MessageBus {
 		//TODO check if synchronized can be removed
 		synchronized (q) {
 			m = q.poll();
+			if(m == null)
+				return null;
 			q.add(m);
 		}
 		mServiceMessageQueues.get(m).add(e);
@@ -71,17 +75,21 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void register(MicroService m) {
 		mServiceMessageQueues.putIfAbsent(m, new LinkedBlockingQueue<>());
+		isRegisteredMap.compute(m, (key, value) -> true);
 	}
 
 	@Override
 	public void unregister(MicroService m) {
-		// TODO Auto-generated method stub
-
+		if(!wasRegistered(m))
+			return;
+		broadCasts.forEachValue(10, v -> v.remove(m));
+		Events.forEachValue(10, v -> v.remove(m));
+		isRegisteredMap.computeIfPresent(m, (key, value) -> false);
 	}
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
-		if(!isRegistered(m))
+		if(!wasRegistered(m))
 			throw new IllegalStateException();
 		return mServiceMessageQueues.get(m).take();
 	}
@@ -98,7 +106,11 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public boolean isRegistered(MicroService m){
-		return mServiceMessageQueues.contains(m);
+		return isRegisteredMap.getOrDefault(m, false);
+	}
+
+	private boolean wasRegistered(MicroService m){
+		return isRegisteredMap.contains(m);
 	}
 
 }
