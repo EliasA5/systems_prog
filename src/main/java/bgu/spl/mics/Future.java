@@ -31,7 +31,9 @@ public class Future<T> {
 	public synchronized T get() {
 		while(!done)
 			try {wait();}
-			catch (InterruptedException ignore) {}
+			catch (InterruptedException ignore) {
+				return null;
+			}
 
 		return res;
 	}
@@ -67,9 +69,12 @@ public class Future<T> {
 		while(!done)
 			try{
 				wait(unit.toMillis(timeout));
+				if(!done)
+					return null;
+			}
+			catch (InterruptedException ignore) {
 				return null;
 			}
-			catch (InterruptedException ignore) {}
 		return res;
 	}
 
