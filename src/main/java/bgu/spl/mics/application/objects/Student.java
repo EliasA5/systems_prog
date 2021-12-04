@@ -12,11 +12,11 @@ public class Student {
         MSc, PhD
     }
 
-    private int name;
-    private String department;
-    private Degree status;
-    private int publications;
-    private int papersRead;
+    private final String name;
+    private final String department;
+    private final Degree status;
+    private int publications = 0;
+    private int papersRead = 0;
 
     public Student(String _name, String _department, String _status){
         name = _name;

@@ -5,11 +5,10 @@ import bgu.spl.mics.example.messages.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import junit.framework.TestCase;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessageBusImplTest extends TestCase{
+public class MessageBusImplTest{
     MessageBusImpl bus;
     ExampleEventHandlerService handler;
     ExampleBroadcastListenerService handlerB;

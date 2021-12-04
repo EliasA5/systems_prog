@@ -6,6 +6,20 @@ package bgu.spl.mics.application.objects;
  */
 public class ConfrenceInformation {
 
-    private String name;
-    private int date;
+    private final String name;
+    private final int date;
+
+    public ConfrenceInformation(String _name, int _date){
+        name = _name;
+        date = _date;
+    }
+
+    public int getDate() {
+        return date;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }

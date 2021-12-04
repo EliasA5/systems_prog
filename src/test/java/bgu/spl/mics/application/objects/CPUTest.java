@@ -2,11 +2,10 @@ package bgu.spl.mics.application.objects;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import junit.framework.TestCase;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CPUTest extends TestCase{
+public class CPUTest{
     CPU cpu;
     DataBatch data;
     @BeforeEach

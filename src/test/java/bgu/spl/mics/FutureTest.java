@@ -1,14 +1,14 @@
 package bgu.spl.mics;
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import junit.framework.TestCase;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FutureTest extends TestCase{
+public class FutureTest{
     Future<Integer> fut;
     @BeforeEach
     public void setUp() {
