@@ -110,7 +110,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	private boolean wasRegistered(MicroService m){
-		return isRegisteredMap.contains(m);
+		return isRegisteredMap.containsKey(m);
 	}
 
 }
