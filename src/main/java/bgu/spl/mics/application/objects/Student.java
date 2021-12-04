@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 /**
  * Passive object representing single student.
  * Add fields and methods to this class as you see fit (including public methods and constructors).
@@ -17,11 +20,13 @@ public class Student {
     private final Degree status;
     private int publications = 0;
     private int papersRead = 0;
+    private LinkedList<Model> models;
 
-    public Student(String _name, String _department, String _status){
+    public Student(String _name, String _department, String _status, LinkedList<Model> _models){
         name = _name;
         department = _department;
         status = Degree.valueOf(_status);
+        models = _models;
     }
 
     public String getName(){
@@ -47,8 +52,22 @@ public class Student {
     public void incPublications(){
         publications++;
     }
+
+    public void incPapersRead(LinkedList<Model> succModels){
+        for(Model mod: succModels)
+            incPapersRead(mod.getStudent());
+    }
+
     public void incPapersRead(Student other){
         if(other != this)
             papersRead++;
     }
+
+    public Iterator<Model> getModelsIterator(){
+        return models.iterator();
+    }
+    public LinkedList<Model> getModels(){
+        return models;
+    }
+
 }

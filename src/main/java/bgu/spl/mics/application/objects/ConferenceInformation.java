@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.LinkedList;
+
 /**
  * Passive object representing information on a conference.
  * Add fields and methods to this class as you see fit (including public methods and constructors).
@@ -8,7 +10,7 @@ public class ConferenceInformation {
 
     private final String name;
     private final int date;
-
+    private final LinkedList<Model> successfulModels = new LinkedList<>();
     public ConferenceInformation(String _name, int _date){
         name = _name;
         date = _date;
@@ -20,6 +22,15 @@ public class ConferenceInformation {
 
     public String getName() {
         return name;
+    }
+
+    public void addModelIfSuccessful(Model mod){
+        if(mod.getResult() == "Good")
+            successfulModels.add(mod);
+    }
+
+    public LinkedList<Model> getSuccessfulModels(){
+        return successfulModels;
     }
 
 }

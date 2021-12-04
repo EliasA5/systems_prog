@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.services;
-
+import bgu.spl.mics.MessageBusImpl;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
+import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.MicroService;
 
 /**
@@ -13,15 +15,26 @@ import bgu.spl.mics.MicroService;
  */
 public class TimeService extends MicroService{
 
-	public TimeService() {
-		super("Change_This_Name");
-		// TODO Implement this
+	private int speed;
+	private int duration;
+	private MessageBusImpl bus = MessageBusImpl.getInstance();
+	public TimeService(int _speed, int _duration) {
+		super("Timer");
+		speed = _speed;
+		duration = _duration;
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
-		
+		TickBroadcast tick = new TickBroadcast();
+		while(duration >= 0){
+			duration--;
+			bus.sendBroadcast(tick);
+			try{Thread.sleep(speed);}
+			catch(InterruptedException ignore){}
+		}
+		bus.sendBroadcast(new TerminateBroadcast());
+		terminate();
 	}
 
 }
