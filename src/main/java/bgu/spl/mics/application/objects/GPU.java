@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.objects;
 
+import bgu.spl.mics.Event;
 import bgu.spl.mics.application.services.GPUService;
 
 /**
@@ -14,7 +15,7 @@ public class GPU {
     public GPU(String ty){
         type = Type.valueOf(ty);
         cluster = Cluster.getInstance();
-        serviceThread = new Thread(new GPUService(ty));
+        serviceThread = new Thread(new GPUService(ty, this));
         switch(type){
             case RTX3090:
                 timeToTrain = 1;
@@ -48,6 +49,13 @@ public class GPU {
     }
     public boolean isRunning(){
         return serviceThread.isAlive();
+    }
+    public int getMaxNumOfBatches(){
+        return maxNumOfBatches;
+    }
+
+    public void trainModel(Event<Model> ev){
+        //TODO IMPLEMENT THIS
     }
 
     enum Type {RTX3090, RTX2080, GTX1080}

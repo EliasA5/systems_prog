@@ -30,6 +30,7 @@ public class Data {
     public int getProcessed() {
         return processed.get();
     }
+    public int remainingBatches(){return size - processed.get();}
     public void incProcessed(){
         int val;
         do{

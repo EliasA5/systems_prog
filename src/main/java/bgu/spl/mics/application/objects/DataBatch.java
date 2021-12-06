@@ -9,11 +9,14 @@ public class DataBatch {
 
     private Data data;
     private int start_index;
+    private GPU ownerGPU;
 
-    public DataBatch(Data _data, int _start_index){
+    public DataBatch(Data _data, int _start_index , GPU _ownerGPU){
         data = _data;
         start_index = _start_index;
+        ownerGPU = _ownerGPU;
     }
     public DataBatch(){}
+
 
 }

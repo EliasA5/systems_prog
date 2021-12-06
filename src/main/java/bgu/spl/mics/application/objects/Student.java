@@ -37,8 +37,8 @@ public class Student {
         return department;
     }
 
-    public Degree getStatus(){
-        return status;
+    public String getStatus(){
+        return status.toString();
     }
 
     public int getPublications(){
