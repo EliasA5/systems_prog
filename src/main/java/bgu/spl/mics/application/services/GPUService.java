@@ -20,7 +20,25 @@ public class GPUService extends MicroService {
 
     @Override
     protected void initialize() {
-        // TODO Implement this
+        subscribeBroadcast(TerminateBroadcast.class, tick -> terminate());
+        subscribeBroadcast(TickBroadcast.class, tick ->{
+            //TODO: complete TickBroadcast in GPU
+        });
+
+        subscribeEvent(TrainModelEvent.class, ev -> {
+            gpu.trainModel(ev);
+        });
+
+        subscribeEvent(TestModelEvent.class, ev -> {
+            Model mod = ev.getModel();
+            Random rand = new Random();
+            int probability = mod.getStudent().getStatus() == "MSc" ? 6 : 8;
+            if(mod.getStatus() == "Trained") {
+                mod.setStatus("Tested");
+                mod.setResult(rand.nextInt(10) <= probability ? "Good" : "Bad");
+            }
+            bus.complete(ev, mod);
+        });
 
     }
 }
