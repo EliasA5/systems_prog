@@ -42,10 +42,11 @@ public class Cluster {
 		toProcessInCPUs.offer(batch);
 	}
 
-	public DataBatch getNextBatch(){
-		try{return toProcessInCPUs.take();}
-		catch(InterruptedException ignore){}
-		return null;
+	public DataBatch getNextBatchCPU(){
+		return toProcessInCPUs.poll();
+	}
+	public DataBatch getNextBatchGPU(GPU gpu){
+		return GPUs.get(gpu).poll();
 	}
 
 	public ConcurrentHashMap<GPU, ArrayBlockingQueue<DataBatch>> getGPUs(){
