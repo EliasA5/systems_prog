@@ -19,19 +19,6 @@ public class CPUTest{
         assertEquals(4, cpu.getCoresNum());
     }
 
-    @Test
-    public void getCPUdata() {
-        assertNull(cpu.peekCPUdata());
-        cpu.setData(data);
-        assertNotNull(cpu.getCPUdata());
-    }
-
-    @Test
-    public void setData() {
-        assertNull(cpu.peekCPUdata());
-        cpu.setData(data);
-        assertNotNull(cpu.peekCPUdata());
-    }
 
     @Test
     public void runService() {

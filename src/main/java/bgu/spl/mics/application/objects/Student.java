@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.objects;
 
+import bgu.spl.mics.application.services.StudentService;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -27,7 +29,16 @@ public class Student {
         department = _department;
         status = Degree.valueOf(_status);
         models = _models;
+        serviceThread = new Thread(new StudentService(name, this));
     }
+
+    public void runService(){
+        serviceThread.start();
+    }
+    public boolean isRunning(){
+        return serviceThread.isAlive();
+    }
+    private Thread serviceThread;
 
     public String getName(){
         return name;

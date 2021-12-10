@@ -14,7 +14,6 @@ public class GPU {
     public GPU(String ty){
         type = Type.valueOf(ty);
         cluster = Cluster.getInstance();
-        serviceThread = new Thread(new GPUService(ty, this));
         busy = false;
         switch(type){
             case RTX3090:
@@ -30,6 +29,7 @@ public class GPU {
                 maxNumOfBatches = 8;
                 break;
         }
+        serviceThread = new Thread(new GPUService(ty, this));
     }
 
     public void setModel(Model model) {

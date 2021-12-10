@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.objects;
 
 import java.util.LinkedList;
-
+import bgu.spl.mics.application.services.ConferenceService;
 /**
  * Passive object representing information on a conference.
  * Add fields and methods to this class as you see fit (including public methods and constructors).
@@ -14,7 +14,16 @@ public class ConferenceInformation {
     public ConferenceInformation(String _name, int _date){
         name = _name;
         date = _date;
+        serviceThread = new Thread(new ConferenceService(_name, this));
     }
+
+    public void runService(){
+        serviceThread.start();
+    }
+    public boolean isRunning(){
+        return serviceThread.isAlive();
+    }
+    private Thread serviceThread;
 
     public int getDate() {
         return date;

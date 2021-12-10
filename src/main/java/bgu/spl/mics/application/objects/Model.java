@@ -18,9 +18,9 @@ public class Model {
         None, Good, Bad
     }
 
-    public Model(String _name, Data _data, Student _student){
+    public Model(String _name, String _type, int size, Student _student){
         name = _name;
-        data = _data;
+        data = new Data(_type, size);
         student = _student;
     }
     public Model(){}
