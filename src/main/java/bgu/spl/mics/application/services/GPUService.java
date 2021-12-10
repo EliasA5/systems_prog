@@ -6,6 +6,8 @@ import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TestModelEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrainModelEvent;
+import bgu.spl.mics.application.objects.Data;
+import bgu.spl.mics.application.objects.DataBatch;
 import bgu.spl.mics.application.objects.GPU;
 import bgu.spl.mics.application.objects.Model;
 
@@ -23,6 +25,7 @@ import java.util.Random;
 public class GPUService extends MicroService {
     private GPU gpu;
     private MessageBusImpl bus = MessageBusImpl.getInstance();
+    private TrainModelEvent currEvent;
     public GPUService(String name, GPU _gpu) {
         super("name");
         gpu = _gpu;
@@ -32,14 +35,45 @@ public class GPUService extends MicroService {
     protected void initialize() {
         subscribeBroadcast(TerminateBroadcast.class, tick -> terminate());
         subscribeBroadcast(TickBroadcast.class, tick ->{
-            //TODO: complete TickBroadcast in GPU
+            if(gpu.isBusy()) {
+                Data d = gpu.getModel().getData();
+                if(gpu.getNumOfTrainedBatches() == d.getSize()){
+                    Model Trained = gpu.finishTrainingModel();
+                    complete(currEvent, Trained);
+                }
+                else{
+                    if(gpu.getCurrentNumOfBatches() != gpu.getMaxNumOfBatches()) //add batch when you can
+                        gpu.incrementCurrentBatches(); //sends a new databatch to cluster if didn't send all already
+
+                    if(gpu.getCurrentNumOfBatches() != 0)
+                        gpu.decrementCounter();
+
+                    if(gpu.getCounter() == 0) {
+                        gpu.incrementCurrentTrainedBatches();
+                        gpu.resetCounter();
+                        gpu.decrementCurrentNumOfBatches();
+                    }
+                }
+                gpu.incNumOfGPUTicks();
+            }
+
+
         });
 
         subscribeEvent(TrainModelEvent.class, ev -> {
-            gpu.trainModel(ev);
+            if(gpu.isBusy()) {
+                bus.sendEvent(ev);
+                return;
+            }
+            currEvent = ev;
+            gpu.trainModel(ev.getModel());
         });
 
         subscribeEvent(TestModelEvent.class, ev -> {
+            if(gpu.isBusy()) {
+                bus.sendEvent(ev);
+                return;
+            }
             Model mod = ev.getModel();
             Random rand = new Random();
             int probability = mod.getStudent().getStatus() == "MSc" ? 6 : 8;
@@ -47,6 +81,8 @@ public class GPUService extends MicroService {
                 mod.setStatus("Tested");
                 mod.setResult(rand.nextInt(10) <= probability ? "Good" : "Bad");
             }
+            gpu.incNumOfGPUTicks();
+            gpu.addModelName(mod);
             bus.complete(ev, mod);
         });
 

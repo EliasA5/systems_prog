@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.objects;
 
-import bgu.spl.mics.Event;
 import bgu.spl.mics.application.services.GPUService;
 
 /**
@@ -16,6 +15,7 @@ public class GPU {
         type = Type.valueOf(ty);
         cluster = Cluster.getInstance();
         serviceThread = new Thread(new GPUService(ty, this));
+        busy = false;
         switch(type){
             case RTX3090:
                 timeToTrain = 1;
@@ -43,6 +43,9 @@ public class GPU {
     public Type getType(){
         return type;
     }
+    public void incNumOfGPUTicks(){
+        cluster.incNumOfGPUTicks();
+    }
 
     public void runService(){
         serviceThread.start();
@@ -53,14 +56,52 @@ public class GPU {
     public int getMaxNumOfBatches(){
         return maxNumOfBatches;
     }
-
-    public void trainModel(Event<Model> ev){
-        //TODO IMPLEMENT THIS
+    public int getCurrentNumOfBatches(){ return numOfBatches; }
+    public int getNumOfTrainedBatches(){ return numOfTrainedBatches; }
+    public int getCounter(){ return counter; }
+    public DataBatch getNextBatch(){ return cluster.getNextBatchGPU(this); }
+    public void resetCounter(){ counter = timeToTrain; }
+    public void decrementCounter(){ counter--; }
+    public void incrementCurrentBatches(){
+        Data data = model.getData();
+        if(currentIndToSend != data.getSize()) {
+            cluster.addDataBatchToCPU(new DataBatch(data, currentIndToSend, this));
+            numOfBatches++;
+            currentIndToSend += 1000;
+        }
+    }
+    public Model finishTrainingModel(){
+        Model m = model;
+        busy = false;
+        model = null;
+        return m;
+    }
+    public void incrementCurrentTrainedBatches(){
+        numOfTrainedBatches++;
+    }
+    public void decrementCurrentNumOfBatches(){
+        numOfBatches--;
+    }
+    public void trainModel(Model mod){
+        busy = true;
+        model = mod;
+        numOfBatches = 0;
+        currentIndToSend = 0;
     }
 
+    public boolean isBusy(){
+        return busy;
+    }
+    public void addModelName(Model mod){
+        cluster.addModelName(mod.getName());
+    }
     enum Type {RTX3090, RTX2080, GTX1080}
+    private int currentIndToSend;
+    private boolean busy;
     private int timeToTrain;
+    private int counter;
     private int numOfBatches;
+    private int numOfTrainedBatches;
     private int maxNumOfBatches;
     private Model model;
     private Cluster cluster;
