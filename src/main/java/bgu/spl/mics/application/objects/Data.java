@@ -27,6 +27,12 @@ public class Data {
         return size;
     }
 
+    public String getType(){
+        return type.toString();
+    }
+
+
+
     public int getProcessed() {
         return processed.get();
     }

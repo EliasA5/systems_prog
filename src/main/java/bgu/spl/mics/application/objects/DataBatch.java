@@ -18,5 +18,11 @@ public class DataBatch {
     }
     public DataBatch(){}
 
+    public String getDataType(){
+        return data.getType();
+    }
+    public GPU getOwnerGPU(){
+        return ownerGPU;
+    }
 
 }
