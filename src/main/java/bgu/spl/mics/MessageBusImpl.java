@@ -68,8 +68,10 @@ public class MessageBusImpl implements MessageBus {
 		}
 		mServiceMessageQueues.get(m).add(e);
 		Future<T> fut = new Future<>();
-		eventFutures.put(e, fut);
-		return fut;
+		Future<T> oldFut = eventFutures.putIfAbsent(e, fut);
+		if(oldFut == null)
+			return fut;
+		return oldFut;
 	}
 
 	@Override
