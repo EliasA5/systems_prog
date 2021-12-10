@@ -1,23 +1,43 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
+import bgu.spl.mics.application.messages.TickBroadcast;
+import bgu.spl.mics.application.objects.CPU;
+import bgu.spl.mics.application.objects.DataBatch;
 
 /**
- * CPU service is responsible for handling the {@link DataPreProcessEvent}.
+ * CPU service is responsible for handling the {@link //DataPreProcessEvent}.
  * This class may not hold references for objects which it is not responsible for.
  *
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class CPUService extends MicroService {
-    public CPUService(String name) {
-        super("Change_This_Name");
-        // TODO Implement this
+
+    CPU cpu;
+    public CPUService(String name, CPU _cpu) {
+        super(name);
+        cpu = _cpu;
     }
 
     @Override
     protected void initialize() {
-        // TODO Implement this
+        subscribeBroadcast(TerminateBroadcast.class, tick -> terminate());
+        subscribeBroadcast(TickBroadcast.class, tick -> {
+            if(cpu.isBusy()){
+                if(cpu.getCounter() == 0){
+                    cpu.finishBatch();
+                    cpu.addBatch();
+                }
+                else
+                    cpu.decrementCounter();
+                cpu.incNumOfCPUTicks();
+            }
+            else
+                cpu.addBatch();
+
+        });
 
     }
 }
