@@ -42,11 +42,13 @@ public class GPUService extends MicroService {
         subscribeBroadcast(TickBroadcast.class, tick ->{
             if(gpu.isBusy()) {
                 Data d = gpu.getModel().getData();
-                if(gpu.getNumOfTrainedBatches() == d.getSize()){
+                if(gpu.getNumOfTrainedBatches()*1000 == d.getSize()){
                     Model Trained = gpu.finishTrainingModel();
+                    gpu.addModelName(Trained);
                     complete(currEvent, Trained);
                 }
                 else{
+                    //TODO check gpu getNextBatch
                     if(gpu.getCurrentNumOfBatches() != gpu.getMaxNumOfBatches()) //add batch when you can
                         gpu.incrementCurrentBatches(); //sends a new databatch to cluster if didn't send all already
 
