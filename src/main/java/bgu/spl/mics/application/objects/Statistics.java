@@ -53,4 +53,10 @@ public class Statistics {
         modelNames.add(name);
     }
 
+    public String stats(){
+        //TODO implement string output
+        String[] modelNames = getModelNames();
+        String Names = String.join(", ", modelNames);
+        return "CPU Ticks: " + getNumOfCPUTicks() + "\nGPU ticks: " + getNumOfGPUTicks() + "\nNumber Of Processed Data Batches: " + getNumOfProcDataBatch() + "\nModel Names: " + Names;
+    }
 }

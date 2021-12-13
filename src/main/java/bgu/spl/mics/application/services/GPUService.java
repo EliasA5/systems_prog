@@ -24,7 +24,6 @@ import java.util.Random;
  */
 public class GPUService extends MicroService {
     private GPU gpu;
-    private MessageBusImpl bus = MessageBusImpl.getInstance();
     private TrainModelEvent currEvent;
     public GPUService(String name, GPU _gpu) {
         super("name");
@@ -33,7 +32,13 @@ public class GPUService extends MicroService {
 
     @Override
     protected void initialize() {
-        subscribeBroadcast(TerminateBroadcast.class, tick -> terminate());
+        subscribeBroadcast(TerminateBroadcast.class, tick -> {
+            if(gpu.isBusy()){
+                gpu.finishTrainingModel();
+                complete(currEvent, null);
+            }
+            terminate();
+        });
         subscribeBroadcast(TickBroadcast.class, tick ->{
             if(gpu.isBusy()) {
                 Data d = gpu.getModel().getData();
@@ -45,8 +50,10 @@ public class GPUService extends MicroService {
                     if(gpu.getCurrentNumOfBatches() != gpu.getMaxNumOfBatches()) //add batch when you can
                         gpu.incrementCurrentBatches(); //sends a new databatch to cluster if didn't send all already
 
-                    if(gpu.getCurrentNumOfBatches() != 0)
+                    if(gpu.getCurrentNumOfBatches() != 0) {
                         gpu.decrementCounter();
+                        gpu.incNumOfGPUTicks();
+                    }
 
                     if(gpu.getCounter() == 0) {
                         gpu.incrementCurrentTrainedBatches();
@@ -54,7 +61,7 @@ public class GPUService extends MicroService {
                         gpu.decrementCurrentNumOfBatches();
                     }
                 }
-                gpu.incNumOfGPUTicks();
+
             }
 
 
@@ -62,7 +69,7 @@ public class GPUService extends MicroService {
 
         subscribeEvent(TrainModelEvent.class, ev -> {
             if(gpu.isBusy()) {
-                bus.sendEvent(ev);
+                sendEvent(ev);
                 return;
             }
             currEvent = ev;
@@ -71,7 +78,7 @@ public class GPUService extends MicroService {
 
         subscribeEvent(TestModelEvent.class, ev -> {
             if(gpu.isBusy()) {
-                bus.sendEvent(ev);
+                sendEvent(ev);
                 return;
             }
             Model mod = ev.getModel();
@@ -83,7 +90,7 @@ public class GPUService extends MicroService {
             }
             gpu.incNumOfGPUTicks();
             gpu.addModelName(mod);
-            bus.complete(ev, mod);
+            complete(ev, mod);
         });
 
     }

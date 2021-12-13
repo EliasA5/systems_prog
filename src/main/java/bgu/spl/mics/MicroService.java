@@ -136,6 +136,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final void terminate() {
         this.terminated = true;
+        Thread.currentThread().interrupt();
     }
 
     /**
@@ -154,14 +155,14 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         bus.register(this);
         initialize();
-        while (!terminated) {
+        while (!terminated || !Thread.currentThread().isInterrupted()) {
             Message m = null;
             try{
                 m = bus.awaitMessage(this);
             }
             catch(InterruptedException ignore){}
-            broadcastCallbacks.getOrDefault(m, c -> {}).call(m);
-            eventCallbacks.getOrDefault(m, c -> {}).call(m);
+            broadcastCallbacks.getOrDefault(m.getClass(), c -> {}).call(m);
+            eventCallbacks.getOrDefault(m.getClass(), c -> {}).call(m);
         }
         bus.unregister(this);
     }

@@ -24,11 +24,10 @@ public class Student {
     private int papersRead = 0;
     private LinkedList<Model> models;
 
-    public Student(String _name, String _department, String _status, LinkedList<Model> _models){
+    public Student(String _name, String _department, String _status){
         name = _name;
         department = _department;
         status = Degree.valueOf(_status);
-        models = _models;
         serviceThread = new Thread(new StudentService(name, this));
     }
 
@@ -79,6 +78,10 @@ public class Student {
     }
     public LinkedList<Model> getModels(){
         return models;
+    }
+
+    public void addModels(LinkedList<Model> _models){
+        models = _models;
     }
 
 }

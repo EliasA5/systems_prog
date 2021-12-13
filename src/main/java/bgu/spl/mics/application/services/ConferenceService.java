@@ -21,7 +21,6 @@ public class ConferenceService extends MicroService {
 
     private int timer;
     private ConferenceInformation info;
-    private MessageBusImpl bus = MessageBusImpl.getInstance();
     public ConferenceService(String name, ConferenceInformation _info) {
         super(name);
         info = _info;
@@ -39,7 +38,7 @@ public class ConferenceService extends MicroService {
             timer--;
             if(timer == 0){
                 PublishConferenceBroadcast b = new PublishConferenceBroadcast(info);
-                bus.sendBroadcast(b);
+                sendBroadcast(b);
                 terminate();
             }
         });

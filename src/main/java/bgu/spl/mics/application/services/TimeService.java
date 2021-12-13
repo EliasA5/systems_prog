@@ -17,7 +17,6 @@ public class TimeService extends MicroService{
 
 	private int speed;
 	private int duration;
-	private MessageBusImpl bus = MessageBusImpl.getInstance();
 	public TimeService(int _speed, int _duration) {
 		super("Timer");
 		speed = _speed;
@@ -29,11 +28,11 @@ public class TimeService extends MicroService{
 		TickBroadcast tick = new TickBroadcast();
 		while(duration >= 0){
 			duration--;
-			bus.sendBroadcast(tick);
+			sendBroadcast(tick);
 			try{Thread.sleep(speed);}
 			catch(InterruptedException ignore){}
 		}
-		bus.sendBroadcast(new TerminateBroadcast());
+		sendBroadcast(new TerminateBroadcast());
 		terminate();
 	}
 

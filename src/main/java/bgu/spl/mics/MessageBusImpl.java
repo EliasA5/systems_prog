@@ -60,12 +60,10 @@ public class MessageBusImpl implements MessageBus {
 			return null;
 		MicroService m;
 		//TODO check if synchronized can be removed
-		synchronized (q) {
-			m = q.poll();
-			if(m == null)
-				return null;
-			q.add(m);
-		}
+		m = q.poll();
+		if(m == null)
+			return null;
+		q.add(m);
 		mServiceMessageQueues.get(m).add(e);
 		Future<T> fut = new Future<>();
 		Future<T> oldFut = eventFutures.putIfAbsent(e, fut);

@@ -43,19 +43,18 @@ public class CPU {
     public int getCounter(){ return counter; }
     public void finishBatch(){
         busy = false;
-        DataBatch batch = CPUdata.get(0);
+        DataBatch batch = CPUdata.remove(0);
         cluster.addDataBatchToGPU(batch.getOwnerGPU(), batch);
         cluster.incNumOfProcDataBatch();
-        CPUdata.set(0, null);
     }
     public boolean addBatch(){
-        if(CPUdata.get(0) != null)
+        if(CPUdata.size() != 0)
             return false;
         DataBatch batch = cluster.getNextBatchCPU();
         if(batch == null)
             return false;
         busy = true;
-        CPUdata.set(0, batch);
+        CPUdata.add(0, batch);
         setTimeToProcess(batch);
         resetCounter();
         return true;

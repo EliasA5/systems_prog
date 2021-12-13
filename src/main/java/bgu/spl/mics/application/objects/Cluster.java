@@ -35,6 +35,7 @@ public class Cluster {
 	public int getNumOfCPUTicks() {return statistics.getNumOfCPUTicks();}
 	public int getNumOfProcDataBatch() {return statistics.getNumOfProcDataBatch();}
 	public String[] getModelNames(){return statistics.getModelNames();}
+	public String stats(){return statistics.stats();}
 
 
 
