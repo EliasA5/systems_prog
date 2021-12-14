@@ -5,7 +5,7 @@ import bgu.spl.mics.Event;
 
 public class TestModelEvent implements Event<Model> {
 
-    private Model model;
+    private final Model model;
 
     public TestModelEvent(Model _model){
      model = _model;

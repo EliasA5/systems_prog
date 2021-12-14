@@ -25,7 +25,7 @@ public abstract class MicroService implements Runnable {
     private final String name;
     private final HashMap<Class<? extends Event<?>>, Callback> eventCallbacks = new HashMap<>();
     private final HashMap<Class<? extends Broadcast>, Callback> broadcastCallbacks = new HashMap<>();
-    private MessageBusImpl bus = MessageBusImpl.getInstance();
+    private final MessageBusImpl bus = MessageBusImpl.getInstance();
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)

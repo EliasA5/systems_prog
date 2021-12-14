@@ -84,4 +84,12 @@ public class Student {
         models = _models;
     }
 
+    public String toString(){
+        String s = "Student Name: " + name + " " + getStatus() + ", Papers read: " + getPapersRead() + ", Models:\n";
+        for(Model m: models)
+            if(m.isTrained())
+                s += m.getName() + " " + m.isPublished() + "\n";
+        return s;
+    }
+
 }

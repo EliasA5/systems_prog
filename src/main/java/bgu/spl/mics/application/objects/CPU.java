@@ -14,7 +14,7 @@ public class CPU {
 
     public CPU(int numOfCores){
         coresNum = numOfCores;
-        CPUdata = new ArrayList<DataBatch>(2);
+        CPUdata = new ArrayList<>(2);
         cluster = Cluster.getInstance();
         serviceThread = new Thread(new CPUService(Integer.toString(coresNum), this));
     }
@@ -65,8 +65,8 @@ public class CPU {
     private int counter;
     private int timeToProcess;
     private boolean busy;
-    private int coresNum;
-    private ArrayList<DataBatch> CPUdata; //Databatch
-    private Cluster cluster;
-    private Thread serviceThread;
+    private final int coresNum;
+    private final ArrayList<DataBatch> CPUdata; //Databatch
+    private final Cluster cluster;
+    private final Thread serviceThread;
 }

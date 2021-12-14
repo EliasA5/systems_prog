@@ -42,4 +42,11 @@ public class ConferenceInformation {
         return successfulModels;
     }
 
+    public String toString(){
+        String s = name + ", Published Models:\n";
+        for(Model succModel : successfulModels)
+            s += " " + succModel.getName();
+        s += "\n";
+        return s;
+    }
 }

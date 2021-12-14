@@ -72,6 +72,7 @@ public class GPU {
         }
     }
     public Model finishTrainingModel(){
+        model.setStatus("Trained");
         Model m = model;
         busy = false;
         model = null;
@@ -86,10 +87,17 @@ public class GPU {
     public void trainModel(Model mod){
         busy = true;
         model = mod;
+        model.setStatus("Training");
         numOfBatches = 0;
         currentIndToSend = 0;
+        counter = 0;
     }
-
+    public boolean hasBatch(){
+        return currentDataBatch != null;
+    }
+    public void updateBatch(){
+        currentDataBatch = getNextBatch();
+    }
     public boolean isBusy(){
         return busy;
     }
@@ -97,6 +105,7 @@ public class GPU {
         cluster.addModelName(mod.getName());
     }
     enum Type {RTX3090, RTX2080, GTX1080}
+    private DataBatch currentDataBatch;
     private int currentIndToSend;
     private boolean busy;
     private int timeToTrain;
@@ -105,8 +114,8 @@ public class GPU {
     private int numOfTrainedBatches;
     private int maxNumOfBatches;
     private Model model;
-    private Cluster cluster;
-    private Type type;
-    private Thread serviceThread;
+    private final Cluster cluster;
+    private final Type type;
+    private final Thread serviceThread;
 
 }

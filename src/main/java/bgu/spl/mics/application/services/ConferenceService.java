@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.messages.PublishConferenceBroadcast;
 import bgu.spl.mics.application.messages.PublishResultsEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
@@ -20,7 +19,7 @@ import bgu.spl.mics.MicroService;
 public class ConferenceService extends MicroService {
 
     private int timer;
-    private ConferenceInformation info;
+    private final ConferenceInformation info;
     public ConferenceService(String name, ConferenceInformation _info) {
         super(name);
         info = _info;

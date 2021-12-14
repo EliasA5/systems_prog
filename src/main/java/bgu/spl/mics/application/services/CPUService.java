@@ -4,7 +4,6 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.CPU;
-import bgu.spl.mics.application.objects.DataBatch;
 
 /**
  * CPU service is responsible for handling the {@link //DataPreProcessEvent}.

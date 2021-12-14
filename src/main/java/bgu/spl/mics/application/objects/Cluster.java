@@ -47,7 +47,10 @@ public class Cluster {
 		return toProcessInCPUs.poll();
 	}
 	public DataBatch getNextBatchGPU(GPU gpu){
-		return GPUs.get(gpu).poll();
+		ArrayBlockingQueue<DataBatch> batches = GPUs.get(gpu);
+		if(batches != null)
+			return batches.poll();
+		return null;
 	}
 
 	public ConcurrentHashMap<GPU, ArrayBlockingQueue<DataBatch>> getGPUs(){
@@ -55,12 +58,13 @@ public class Cluster {
 	}
 
 	public void addDataBatchToGPU(GPU gpu, DataBatch databatch){
-		GPUs.compute(gpu, (key, value) -> {
+		try{GPUs.compute(gpu, (key, value) -> {
 			if(value == null)
 				return new ArrayBlockingQueue<>(key.getMaxNumOfBatches());
 			else
 				return value;
-		}).add(databatch);
+		}).put(databatch);}
+		catch(InterruptedException e){}
 	}
 
 

@@ -1,5 +1,4 @@
 package bgu.spl.mics.application.services;
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.MicroService;
@@ -15,7 +14,7 @@ import bgu.spl.mics.MicroService;
  */
 public class TimeService extends MicroService{
 
-	private int speed;
+	private final int speed;
 	private int duration;
 	public TimeService(int _speed, int _duration) {
 		super("Timer");

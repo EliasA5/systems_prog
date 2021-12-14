@@ -46,4 +46,10 @@ public class Model {
     public String getStatus(){
         return status.toString();
     }
+    public String isPublished(){
+        return result == Results.Good ? "Published" : "Failed";
+    }
+    public boolean isTrained(){
+        return status == Status.Tested;
+    }
 }

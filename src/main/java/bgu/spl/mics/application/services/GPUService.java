@@ -1,13 +1,11 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.messages.TestModelEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrainModelEvent;
 import bgu.spl.mics.application.objects.Data;
-import bgu.spl.mics.application.objects.DataBatch;
 import bgu.spl.mics.application.objects.GPU;
 import bgu.spl.mics.application.objects.Model;
 
@@ -23,10 +21,10 @@ import java.util.Random;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class GPUService extends MicroService {
-    private GPU gpu;
+    private final GPU gpu;
     private TrainModelEvent currEvent;
     public GPUService(String name, GPU _gpu) {
-        super("name");
+        super(name);
         gpu = _gpu;
     }
 
@@ -42,7 +40,7 @@ public class GPUService extends MicroService {
         subscribeBroadcast(TickBroadcast.class, tick ->{
             if(gpu.isBusy()) {
                 Data d = gpu.getModel().getData();
-                if(gpu.getNumOfTrainedBatches()*1000 == d.getSize()){
+                if(gpu.getNumOfTrainedBatches()*1000 >= d.getSize()){
                     Model Trained = gpu.finishTrainingModel();
                     gpu.addModelName(Trained);
                     complete(currEvent, Trained);
@@ -50,18 +48,22 @@ public class GPUService extends MicroService {
                 else{
                     //TODO check gpu getNextBatch
                     if(gpu.getCurrentNumOfBatches() != gpu.getMaxNumOfBatches()) //add batch when you can
-                        gpu.incrementCurrentBatches(); //sends a new databatch to cluster if didn't send all already
+                        gpu.incrementCurrentBatches(); //sends a new dataBatch to cluster if didn't send all already
 
-                    if(gpu.getCurrentNumOfBatches() != 0) {
+                    if(gpu.getCounter() != 0 && gpu.hasBatch()) {
                         gpu.decrementCounter();
                         gpu.incNumOfGPUTicks();
                     }
 
-                    if(gpu.getCounter() == 0) {
+                    if(gpu.getCounter() == 0 && gpu.hasBatch()) {
                         gpu.incrementCurrentTrainedBatches();
                         gpu.resetCounter();
                         gpu.decrementCurrentNumOfBatches();
+                        gpu.updateBatch();
                     }
+
+                    if(!gpu.hasBatch())
+                        gpu.updateBatch();
                 }
 
             }
@@ -85,13 +87,12 @@ public class GPUService extends MicroService {
             }
             Model mod = ev.getModel();
             Random rand = new Random();
-            int probability = mod.getStudent().getStatus() == "MSc" ? 6 : 8;
-            if(mod.getStatus() == "Trained") {
+            int probability = mod.getStudent().getStatus().equals("MSc") ? 6 : 8;
+            if(mod.getStatus().equals("Trained")) {
                 mod.setStatus("Tested");
                 mod.setResult(rand.nextInt(10) <= probability ? "Good" : "Bad");
             }
             gpu.incNumOfGPUTicks();
-            gpu.addModelName(mod);
             complete(ev, mod);
         });
 

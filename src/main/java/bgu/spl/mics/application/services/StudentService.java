@@ -29,26 +29,31 @@ public class StudentService extends MicroService {
     @Override
     protected void initialize() {
 
-        subscribeBroadcast(TerminateBroadcast.class, term -> terminate());
+
         subscribeBroadcast(PublishConferenceBroadcast.class, broad ->{
             student.incPapersRead(broad.getConference().getSuccessfulModels());
         });
-
-        LinkedList<Model> models = student.getModels();
-        for(Model model: models){
-            Future<Model> futureModelPreTrained = sendEvent(new TrainModelEvent(model));
-            if(futureModelPreTrained != null){
-                Model trainedModel = futureModelPreTrained.get();
-                Future<Model> futureModelTested = sendEvent(new TestModelEvent(trainedModel));
-                if(futureModelTested != null){
-                    Model testedModel = futureModelTested.get();
-                    if(testedModel.getResult() == "Good") {
-                        student.incPublications();
-                        sendEvent(new PublishResultsEvent(testedModel));
+        Thread testModels = new Thread( () -> {
+            LinkedList<Model> models = student.getModels();
+            for (Model model : models) {
+                Future<Model> futureModelPreTrained = sendEvent(new TrainModelEvent(model));
+                if (futureModelPreTrained != null) {
+                    Model trainedModel = futureModelPreTrained.get();
+                    Future<Model> futureModelTested = sendEvent(new TestModelEvent(trainedModel));
+                    if (futureModelTested != null) {
+                        Model testedModel = futureModelTested.get();
+                        if (testedModel != null && testedModel.getResult().equals("Good")) {
+                            student.incPublications();
+                            sendEvent(new PublishResultsEvent(testedModel));
+                        }
                     }
                 }
             }
-        }
-
+        });
+        subscribeBroadcast(TerminateBroadcast.class, term -> {
+            terminate();
+            testModels.interrupt();
+        });
+        testModels.start();
     }
 }

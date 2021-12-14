@@ -8,7 +8,6 @@ package bgu.spl.mics.application;
 import bgu.spl.mics.application.objects.*;
 import bgu.spl.mics.application.services.TimeService;
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -18,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /** This is the Main class of Compute Resources Management System application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -55,12 +53,12 @@ public class CRMSRunner {
                 student.addModels(models);
                 students.add(student);
             }
-            //TODO make gpus
+
             JsonArray inputGPUS = input.get("GPUS").getAsJsonArray();
             for(int i = 0; i < inputGPUS.size(); i++)
                 gpus.add(new GPU(inputGPUS.get(i).getAsString()));
 
-            //TODO make cpus
+
             JsonArray inputCPUS = input.get("CPUS").getAsJsonArray();
             for(int i = 0; i < inputCPUS.size(); i++)
                 cpus.add(new CPU(inputCPUS.get(i).getAsInt()));
@@ -87,8 +85,14 @@ public class CRMSRunner {
 
             time.join();
             Thread.sleep(50);
-            BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
             String stats = Cluster.getInstance().stats();
+            stats += "\n";
+            for(ConferenceInformation conference1 : conferences)
+                stats += conference1.toString();
+            stats += "\n";
+            for(Student student1 : students)
+                stats += student1.toString() + "\n";
+            BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
             writer.write(stats);
             writer.close();
         }
