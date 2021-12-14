@@ -23,7 +23,7 @@ public class ConferenceInformation {
     public boolean isRunning(){
         return serviceThread.isAlive();
     }
-    private Thread serviceThread;
+    private final Thread serviceThread;
 
     public int getDate() {
         return date;
@@ -34,7 +34,7 @@ public class ConferenceInformation {
     }
 
     public void addModelIfSuccessful(Model mod){
-        if(mod.getResult() == "Good")
+        if(mod.getResult().equals("Good"))
             successfulModels.add(mod);
     }
 

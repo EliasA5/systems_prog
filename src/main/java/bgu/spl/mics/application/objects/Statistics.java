@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Statistics {
 
-    private AtomicInteger numOfGPUTicks = new AtomicInteger(0);
-    private AtomicInteger numOfCPUTicks = new AtomicInteger(0);
-    private AtomicInteger numOfProcDataBatch = new AtomicInteger(0);
-    private ConcurrentLinkedQueue<String> modelNames = new ConcurrentLinkedQueue<>();
+    private final AtomicInteger numOfGPUTicks = new AtomicInteger(0);
+    private final AtomicInteger numOfCPUTicks = new AtomicInteger(0);
+    private final AtomicInteger numOfProcDataBatch = new AtomicInteger(0);
+    private final ConcurrentLinkedQueue<String> modelNames = new ConcurrentLinkedQueue<>();
 
     public Statistics(){}
 
