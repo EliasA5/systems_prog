@@ -57,14 +57,14 @@ public class Cluster {
 		return GPUs;
 	}
 
-	public void addDataBatchToGPU(GPU gpu, DataBatch databatch){
-		try{GPUs.compute(gpu, (key, value) -> {
+	public boolean addDataBatchToGPU(GPU gpu, DataBatch databatch){
+		return GPUs.compute(gpu, (key, value) -> {
 			if(value == null)
 				return new ArrayBlockingQueue<>(key.getMaxNumOfBatches());
 			else
 				return value;
-		}).put(databatch);}
-		catch(InterruptedException e){}
+		}).offer(databatch);
+
 	}
 
 

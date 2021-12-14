@@ -40,7 +40,7 @@ public class StudentService extends MicroService {
                 Future<Model> futureModelPreTrained = sendEvent(new TrainModelEvent(model));
                 if(curr.isInterrupted())
                     return;
-                if (futureModelPreTrained != null) {
+                if (!curr.isInterrupted() && futureModelPreTrained != null) {
                     Model trainedModel = futureModelPreTrained.get();
                     Future<Model> futureModelTested = sendEvent(new TestModelEvent(trainedModel));
                     if (!curr.isInterrupted() && futureModelTested != null) {

@@ -57,6 +57,6 @@ public class Statistics {
 
         String[] modelNames = getModelNames();
         String Names = String.join(", ", modelNames);
-        return "CPU Ticks: " + getNumOfCPUTicks() + "\nGPU ticks: " + getNumOfGPUTicks() + "\nNumber Of Processed Data Batches: " + getNumOfProcDataBatch() + "Number of Trained Models: " + modelNames.length + "\nTrained Model Names: " + Names + "\n";
+        return "CPU Ticks: " + getNumOfCPUTicks() + "\nGPU ticks: " + getNumOfGPUTicks() + "\nNumber Of Processed Data Batches: " + getNumOfProcDataBatch() + "\nNumber of Trained Models: " + modelNames.length + "\nTrained Model Names: " + Names + "\n";
     }
 }

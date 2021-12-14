@@ -45,7 +45,8 @@ public class ConferenceInformation {
     public String toString(){
         String s = name + ", Published Models:\n";
         for(Model succModel : successfulModels)
-            s += " " + succModel.getName();
+            s += succModel.getName() + ", ";
+        s = s.substring(0, s.length()-2);
         s += "\n";
         return s;
     }

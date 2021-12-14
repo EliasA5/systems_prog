@@ -26,12 +26,13 @@ public class CPUService extends MicroService {
         subscribeBroadcast(TickBroadcast.class, tick -> {
             if(cpu.isBusy()){
                 if(cpu.getCounter() == 0){
-                    cpu.finishBatch();
-                    cpu.addBatch();
+                    if(cpu.finishBatch())
+                        cpu.addBatch();
                 }
-                else
+                else{
                     cpu.decrementCounter();
-                cpu.incNumOfCPUTicks();
+                    cpu.incNumOfCPUTicks();
+                }
             }
             else
                 cpu.addBatch();
