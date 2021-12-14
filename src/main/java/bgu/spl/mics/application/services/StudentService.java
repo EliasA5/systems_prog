@@ -35,14 +35,17 @@ public class StudentService extends MicroService {
         });
         Thread testModels = new Thread( () -> {
             LinkedList<Model> models = student.getModels();
+            Thread curr = Thread.currentThread();
             for (Model model : models) {
                 Future<Model> futureModelPreTrained = sendEvent(new TrainModelEvent(model));
+                if(curr.isInterrupted())
+                    return;
                 if (futureModelPreTrained != null) {
                     Model trainedModel = futureModelPreTrained.get();
                     Future<Model> futureModelTested = sendEvent(new TestModelEvent(trainedModel));
-                    if (futureModelTested != null) {
+                    if (!curr.isInterrupted() && futureModelTested != null) {
                         Model testedModel = futureModelTested.get();
-                        if (testedModel != null && testedModel.getResult().equals("Good")) {
+                        if (!curr.isInterrupted() && testedModel != null && testedModel.getResult().equals("Good")) {
                             student.incPublications();
                             sendEvent(new PublishResultsEvent(testedModel));
                         }
