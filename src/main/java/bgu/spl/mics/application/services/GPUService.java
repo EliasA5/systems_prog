@@ -46,7 +46,6 @@ public class GPUService extends MicroService {
                     complete(currEvent, Trained);
                 }
                 else{
-                    //TODO check gpu getNextBatch
                     if(gpu.getCurrentNumOfBatches() != gpu.getMaxNumOfBatches()) //add batch when you can
                         gpu.incrementCurrentBatches(); //sends a new dataBatch to cluster if didn't send all already
 
@@ -86,6 +85,11 @@ public class GPUService extends MicroService {
                 return;
             }
             Model mod = ev.getModel();
+            //TODO check this
+            if(mod == null){
+                complete(ev, null);
+                return;
+            }
             Random rand = new Random();
             int probability = mod.getStudent().getStatus().equals("MSc") ? 6 : 8;
             if(mod.getStatus().equals("Trained")) {

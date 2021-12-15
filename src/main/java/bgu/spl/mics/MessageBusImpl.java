@@ -41,7 +41,11 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
-		eventFutures.get(e).resolve(result);
+		//TODO check if the event has a Future before resolving
+		Future<T> future = eventFutures.get(e);
+		if(future == null)
+			return;
+		future.resolve(result);
 	}
 
 	@Override
@@ -59,7 +63,6 @@ public class MessageBusImpl implements MessageBus {
 		if(q == null)
 			return null;
 		MicroService m;
-		//TODO check if synchronized can be removed
 		m = q.poll();
 		if(m == null)
 			return null;

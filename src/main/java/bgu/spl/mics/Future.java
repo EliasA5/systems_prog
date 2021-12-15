@@ -50,7 +50,7 @@ public class Future<T> {
 	/**
      * @return true if this object has been resolved, false otherwise
      */
-	public synchronized boolean isDone() {
+	public boolean isDone() {
 		return done;
 	}
 	

@@ -59,7 +59,6 @@ public class GPU {
     public int getCurrentNumOfBatches(){ return numOfBatches; }
     public int getNumOfTrainedBatches(){ return numOfTrainedBatches; }
     public int getCounter(){ return counter; }
-    //TODO USE THIS
     public DataBatch getNextBatch(){ return cluster.getNextBatchGPU(this); }
     public void resetCounter(){ counter = timeToTrain; }
     public void decrementCounter(){ counter--; }
