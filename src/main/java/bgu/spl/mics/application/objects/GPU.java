@@ -62,13 +62,15 @@ public class GPU {
     public DataBatch getNextBatch(){ return cluster.getNextBatchGPU(this); }
     public void resetCounter(){ counter = timeToTrain; }
     public void decrementCounter(){ counter--; }
-    public void incrementCurrentBatches(){
+    public boolean incrementCurrentBatches(){
         Data data = model.getData();
         if(currentIndToSend != data.getSize()) {
             cluster.addDataBatchToCPU(new DataBatch(data, currentIndToSend, this));
             numOfBatches++;
             currentIndToSend += 1000;
+            return true;
         }
+        return false;
     }
     public Model finishTrainingModel(){
         model.setStatus("Trained");
