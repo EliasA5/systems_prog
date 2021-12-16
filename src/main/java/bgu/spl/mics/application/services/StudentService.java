@@ -37,20 +37,27 @@ public class StudentService extends MicroService {
             LinkedList<Model> models = student.getModels();
             Thread curr = Thread.currentThread();
             for (Model model : models) {
-                Future<Model> futureModelPreTrained = sendEvent(new TrainModelEvent(model));
-                if(curr.isInterrupted())
+                if (curr.isInterrupted())
                     return;
-                if (!curr.isInterrupted() && futureModelPreTrained != null) {
-                    Model trainedModel = futureModelPreTrained.get();
-                    Future<Model> futureModelTested = sendEvent(new TestModelEvent(trainedModel));
-                    if (!curr.isInterrupted() && futureModelTested != null) {
-                        Model testedModel = futureModelTested.get();
-                        if (!curr.isInterrupted() && testedModel != null && testedModel.getResult().equals("Good")) {
-                            student.incPublications();
-                            sendEvent(new PublishResultsEvent(testedModel));
+                Future<Model> futureModelPreTrained;
+                Model trainedModel;
+                Future<Model> futureModelTested;
+                Model testedModel;
+                futureModelPreTrained = sendEvent(new TrainModelEvent(model));
+                if(futureModelPreTrained != null){
+                    trainedModel = futureModelPreTrained.get();
+                    if(trainedModel != null){
+                        futureModelTested = sendEvent(new TestModelEvent(trainedModel));
+                        if(futureModelTested != null){
+                            testedModel = futureModelTested.get();
+                            if(testedModel != null && testedModel.getResult().equals("Good")){
+                                student.incPublications();
+                                sendEvent(new PublishResultsEvent(testedModel));
+                            }
                         }
                     }
                 }
+
             }
         });
         subscribeBroadcast(TerminateBroadcast.class, term -> {

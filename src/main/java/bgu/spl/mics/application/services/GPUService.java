@@ -85,11 +85,6 @@ public class GPUService extends MicroService {
                 return;
             }
             Model mod = ev.getModel();
-            //TODO check this
-            if(mod == null){
-                complete(ev, null);
-                return;
-            }
             Random rand = new Random();
             int probability = mod.getStudent().getStatus().equals("MSc") ? 6 : 8;
             if(mod.getStatus().equals("Trained")) {

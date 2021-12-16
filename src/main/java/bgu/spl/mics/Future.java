@@ -32,6 +32,7 @@ public class Future<T> {
 		while(!done)
 			try {wait();}
 			catch (InterruptedException ignore) {
+				Thread.currentThread().interrupt();
 				return null;
 			}
 
@@ -73,6 +74,7 @@ public class Future<T> {
 					return null;
 			}
 			catch (InterruptedException ignore) {
+				Thread.currentThread().interrupt();
 				return null;
 			}
 		return res;
