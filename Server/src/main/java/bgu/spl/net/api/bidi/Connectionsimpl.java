@@ -38,7 +38,7 @@ public class Connectionsimpl<T> implements Connections<T>{
         int val;
         do{
             val = id.get();
-        }while(id.compareAndSet(val, val+1));
+        }while(!id.compareAndSet(val, val+1));
         CHMap.put(val, handler);
         return val;
     }
