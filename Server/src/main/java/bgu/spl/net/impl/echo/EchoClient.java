@@ -43,8 +43,6 @@ public class EchoClient {
                     System.out.println("awaiting response");
                     String line = in.readLine();
                     System.out.println("message from server: " + line);
-                    line = in.readLine();
-                    System.out.println("message from server: " + line);
                 }
                 catch(IOException e){e.printStackTrace();}
             });

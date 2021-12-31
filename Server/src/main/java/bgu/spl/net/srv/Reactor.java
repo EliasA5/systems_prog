@@ -2,7 +2,8 @@ package bgu.spl.net.srv;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.bidi.BidiMessagingProtocol;
-import bgu.spl.net.srv.bidi.NonBlockingConnectionHandler;
+import bgu.spl.net.api.bidi.Connectionsimpl;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ClosedSelectorException;
@@ -20,6 +21,7 @@ public class Reactor<T> implements Server<T> {
     private final Supplier<MessageEncoderDecoder<T>> readerFactory;
     private final ActorThreadPool pool;
     private Selector selector;
+    private Connectionsimpl connections = new Connectionsimpl();
 
     private Thread selectorThread;
     private final ConcurrentLinkedQueue<Runnable> selectorTasks = new ConcurrentLinkedQueue<>();
@@ -80,7 +82,7 @@ public class Reactor<T> implements Server<T> {
         System.out.println("server closed!!!");
         pool.shutdown();
     }
-
+    //TODO CHECK
     /*package*/ void updateInterestedOps(SocketChannel chan, int ops) {
         final SelectionKey key = chan.keyFor(selector);
         if (Thread.currentThread() == selectorThread) {
@@ -102,6 +104,9 @@ public class Reactor<T> implements Server<T> {
                 protocolFactory.get(),
                 clientChan,
                 this);
+
+        int handlerID = connections.register(handler);
+        handler.startProtocol(handlerID, connections);
         clientChan.register(selector, SelectionKey.OP_READ, handler);
     }
 
