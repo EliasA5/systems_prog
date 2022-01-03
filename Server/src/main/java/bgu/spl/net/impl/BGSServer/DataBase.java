@@ -30,7 +30,7 @@ public class DataBase {
     }
 
     public boolean register(String username, String password, String birthday){
-        return userPass.putIfAbsent(username, new String[]{password, birthday}) == null;
+        return userPass.putIfAbsent(username, new String[]{password, birthday, "0"}) == null;
     }
 
     public boolean add_follower(String toFollow, int connectionID){
@@ -112,7 +112,7 @@ public class DataBase {
         return id;
     }
 
-    private int isLoggedIn(String username){
+    private int isLoggedIn(String username){ //returns -1 if user is not logged in, if logged in returns connectionID of connections
         for(Map.Entry<Integer, String> entry: loggedIn.entrySet())
             if(entry.getValue().equals(username))
                 return entry.getKey();
@@ -145,6 +145,19 @@ public class DataBase {
             else return 0;
                 }, 0, (x, y) -> x+y);
         return num_followers;
+    }
+
+    public int get_num_following(String username){
+        return followers.getOrDefault(username, new ConcurrentHashMap<>()).size();
+    }
+
+    public boolean increment_post(String username){
+        String[] info = userPass.get(username);
+        if(info != null)
+            info[2] = Integer.toString(Integer.parseInt(info[2])+1);
+        else
+            return false;
+        return true;
     }
 
 }
