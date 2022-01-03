@@ -12,7 +12,9 @@ public abstract class Message {
     }
     //TODO implement process for each message
     abstract boolean process(DataBase database, int connectionID, Connections<Message> connections);
-    //public abstract byte[] encode();
+    public byte[] encode(){
+        return new byte[0];
+    }
 
     public static short bytesToShort(byte[] byteArr)
     {
