@@ -17,8 +17,13 @@ public class Block extends Message{
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-
-        return false;
+        boolean success;
+        success = database.add_blocked(username, connectionID);
+        if(success)
+            connections.send(connectionID, new ACK(opcode, concatAllBytes(username.getBytes(StandardCharsets.UTF_8), zeroByte)));
+        else
+            connections.send(connectionID, new ERROR(opcode));
+        return success;
     }
 
 }

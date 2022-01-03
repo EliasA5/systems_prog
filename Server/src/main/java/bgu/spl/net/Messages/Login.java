@@ -5,6 +5,7 @@ import bgu.spl.net.api.bidi.Connections;
 import bgu.spl.net.impl.BGSServer.DataBase;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Login extends Message{
     String username;
@@ -23,8 +24,16 @@ public class Login extends Message{
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
         boolean success = database.logIn(username, password, connectionID, captcha);
-        if(success)
+        if(success) {
             connections.send(connectionID, new ACK(opcode));
+            ConcurrentLinkedQueue<Message> toSend = database.getSendQueue(username);
+            Message mToSend;
+            while(!toSend.isEmpty()){
+                mToSend = toSend.poll();
+                connections.send(connectionID, mToSend);
+            }
+
+        }
         else
             connections.send(connectionID, new ERROR(opcode));
         return success;

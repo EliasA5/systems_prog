@@ -115,6 +115,10 @@ public class DataBase {
         return id;
     }
 
+    public ConcurrentLinkedQueue<Message> getSendQueue(String username){
+        return toSend.getOrDefault(username, new ConcurrentLinkedQueue<>());
+    }
+
     private int isLoggedIn(String username){ //returns -1 if user is not logged in, if logged in returns connectionID of connections
         for(Map.Entry<Integer, String> entry: loggedIn.entrySet())
             if(entry.getValue().equals(username))
