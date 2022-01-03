@@ -9,6 +9,9 @@ public class ERROR extends Message{
     public ERROR(byte[] bytes){
         super(bytes);
     }
+    public ERROR(short _opcode){
+        opcode = _opcode;
+    }
 
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
         return false;

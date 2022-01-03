@@ -20,7 +20,15 @@ public class PrivateMessage extends Message {
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-
+        String sending_user = database.isLoggedIn(connectionID);
+        if(sending_user == null || !database.isRegistered(username) || database.isAFollowingB(sending_user, username)){
+            connections.send(connectionID, new ERROR(opcode));
+        }
+        String filtered_content = database.filter(content);
+        NOTIFICATION noti = new NOTIFICATION((byte) 0, sending_user, filtered_content);
+        int userConnectionID = database.send(username, noti);
+        if(userConnectionID != -1)
+            connections.send(userConnectionID, noti);
         return false;
     }
 

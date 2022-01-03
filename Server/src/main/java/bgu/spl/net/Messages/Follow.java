@@ -22,7 +22,15 @@ public class Follow extends Message{
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-
-        return false;
+        boolean success;
+        if(follow)
+            success = database.add_follower(username, connectionID);
+        else
+            success = database.remove_follower(username, connectionID);
+        if(success)
+            connections.send(connectionID, new ACK(opcode, concatAllBytes(username.getBytes(StandardCharsets.UTF_8), zeroByte)));
+        else
+            connections.send(connectionID, new ERROR(opcode));
+        return success;
     }
 }

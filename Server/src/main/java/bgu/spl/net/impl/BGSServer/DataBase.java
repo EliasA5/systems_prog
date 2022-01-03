@@ -2,6 +2,7 @@ package bgu.spl.net.impl.BGSServer;
 
 import bgu.spl.net.Messages.Message;
 
+import java.time.Year;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -16,17 +17,19 @@ public class DataBase {
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>> toSend;
     private String[] filtered_words;
 
-    public boolean logIn(String username, String password, int connectionID){
+    public boolean logIn(String username, String password, int connectionID, byte captcha){
+        if(captcha == 0)
+            return false;
         String logged = null;
-        if(userPass.get(username)[0].equals(password))
+        if(isLoggedIn(username) == -1 && userPass.get(username)[0].equals(password))
             logged = loggedIn.putIfAbsent(connectionID, username);
         else
             return false;
         return logged == null;
     }
 
-    public boolean logOut(String username, int connectionID){
-        return loggedIn.remove(connectionID, username);
+    public boolean logOut(int connectionID){
+        return loggedIn.remove(connectionID) != null;
     }
 
     public boolean register(String username, String password, String birthday){
@@ -64,8 +67,8 @@ public class DataBase {
                 else
                     return val;
             }).put(toBlock, true);
-            followers.get(me).remove(toBlock);
-            followers.get(toBlock).remove(me);
+            followers.getOrDefault(me, new ConcurrentHashMap<>()).remove(toBlock);
+            followers.getOrDefault(toBlock, new ConcurrentHashMap<>()).remove(me);
         }
         else
             return false;
@@ -119,6 +122,10 @@ public class DataBase {
         return -1;
     }
 
+    public String isLoggedIn(int connectionID){
+        return loggedIn.getOrDefault(connectionID, null);
+    }
+
     public String filter(String content){
         String filtered_content = content;
         for(String filtered_word : filtered_words)
@@ -158,6 +165,49 @@ public class DataBase {
         else
             return false;
         return true;
+    }
+
+    public String[] getFollowers(int connectionID){
+        String me = loggedIn.get(connectionID);
+        if(me == null)
+            return new String[0];
+        return followers.getOrDefault(me, new ConcurrentHashMap<>()).keySet().toArray(new String[0]);
+    }
+
+    public boolean isRegistered(String username){
+        return userPass.containsKey(username);
+    }
+
+    public boolean isAFollowingB(String A, String B){
+        return followers.getOrDefault(B, new ConcurrentHashMap<>()).containsKey(A);
+    }
+
+    public ConcurrentLinkedQueue<byte[]> getLogStats(){
+        String user;
+        short age;
+        short num_posts;
+        short num_followers;
+        short num_following;
+        ConcurrentLinkedQueue<byte[]> result = new ConcurrentLinkedQueue<>();
+        for(Map.Entry<String, String[]> entry: userPass.entrySet()){
+            user = entry.getKey();
+            age = (short) (Year.now().getValue() - Integer.parseInt(entry.getValue()[1].substring(6,10)));
+            num_posts = (short) Integer.parseInt(entry.getValue()[2]);
+            num_followers = (short) get_num_followers(user);
+            num_following = (short) get_num_following(user);
+            result.add(Message.concatAllBytes(Message.shortToBytes(age), Message.shortToBytes(num_posts), Message.shortToBytes(num_followers), Message.shortToBytes(num_following)));
+        }
+        return result;
+    }
+    public byte[] getLogStat(String username){
+        String[] info = userPass.get(username);
+        if(info == null)
+            return null;
+        short age = (short) (Year.now().getValue() - Integer.parseInt(info[1].substring(6,10)));
+        short num_posts = (short) Integer.parseInt(info[2]);
+        short num_followers = (short) get_num_followers(username);
+        short num_following = (short) get_num_following(username);
+        return Message.concatAllBytes(Message.shortToBytes(age), Message.shortToBytes(num_posts), Message.shortToBytes(num_followers), Message.shortToBytes(num_following));
     }
 
 }

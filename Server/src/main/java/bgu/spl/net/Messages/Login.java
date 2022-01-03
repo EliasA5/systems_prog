@@ -22,7 +22,11 @@ public class Login extends Message{
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-
-        return false;
+        boolean success = database.logIn(username, password, connectionID, captcha);
+        if(success)
+            connections.send(connectionID, new ACK(opcode));
+        else
+            connections.send(connectionID, new ERROR(opcode));
+        return success;
     }
 }
