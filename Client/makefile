@@ -6,7 +6,7 @@ all: EchoClient
 
 EchoClient: bin/connectionHandler.o bin/echoClient.o
 	
-bin/connectionHandler.o: src/connectionHandler.cpp
+bin/connectionHandler.o: src/ConnectionHandler.cpp
 	g++ $(CFLAGS) -o bin/connectionHandler.o src/connectionHandler.cpp
 
 bin/echoClient.o: src/echoClient.cpp
