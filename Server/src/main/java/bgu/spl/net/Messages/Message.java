@@ -14,7 +14,7 @@ public abstract class Message {
         opcode = bytesToShort(bytes);
     }
     public Message(){}
-    //TODO implement process for each message
+
     abstract public boolean process(DataBase database, int connectionID, Connections<Message> connections);
     public byte[] encode(){
         return endByte;

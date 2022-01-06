@@ -111,7 +111,7 @@ public class DataBase {
         return true;
     }
 
-    public int send(String user, Message m) {//TODO check returning a null pointer
+    public int send(String user, Message m) {
         int id = -1; //if this functions returns -1, do nothing as the message will be sent later when the user logs in
         if (userPass.get(user) != null) {
             id = isLoggedIn(user);

@@ -81,7 +81,7 @@ public class Reactor<T> implements Server<T> {
         System.out.println("server closed!!!");
         pool.shutdown();
     }
-    //TODO CHECK
+
     /*package*/ void updateInterestedOps(SocketChannel chan, int ops) {
         final SelectionKey key = chan.keyFor(selector);
         if (Thread.currentThread() == selectorThread) {

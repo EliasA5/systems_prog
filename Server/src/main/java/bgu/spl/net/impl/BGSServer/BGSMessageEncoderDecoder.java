@@ -22,7 +22,6 @@ public class BGSMessageEncoderDecoder implements MessageEncoderDecoder<Message> 
 
     @Override
     public byte[] encode(Message message) {
-        //TODO encode messages
         return message.encode();
     }
 
