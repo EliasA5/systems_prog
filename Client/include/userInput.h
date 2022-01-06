@@ -27,9 +27,9 @@ enum command{
 class userInput{
 private:
     ConnectionHandler *handler;
-    bool terminate;
+    bool *terminate;
 public:
-    userInput(ConnectionHandler* _handler, bool& _terminate);
+    userInput(ConnectionHandler* _handler, bool* _terminate);
     virtual ~userInput();
     void operator()();
 };

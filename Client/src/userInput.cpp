@@ -3,7 +3,8 @@
 //
 
 #include "../include/userInput.h"
-
+#include <future>
+#include <chrono>
 
 command getCommandFromString(std::string const &input){
     if(input == "REGISTER") return REGISTER;
@@ -17,14 +18,22 @@ command getCommandFromString(std::string const &input){
     if(input == "BLOCK") return BLOCK;
     return NOCOMMAND;
 }
-userInput::userInput(ConnectionHandler* _handler, bool& _terminate): handler(_handler), terminate(_terminate){}
+userInput::userInput(ConnectionHandler* _handler, bool* _terminate): handler(_handler), terminate(_terminate){}
 userInput::~userInput(){}
+static bool waitInput(char* buf, short bufsize){
+    std::cin.getline(buf, bufsize);
+    return true;
+}
 
 void userInput::operator()() {
     const short bufsize = 1024;
     char buf[bufsize];
-    while(!terminate){
+    std::chrono::milliseconds timeout(200);
+    while(!(*terminate)){
+
         std::cin.getline(buf, bufsize);
+        if(*terminate)
+            return;
         std::stringstream ss(buf);
 
         std::string command;
@@ -61,7 +70,7 @@ void userInput::operator()() {
                 bytesToSend[numBytesToSend-2] = '\0';
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case LOGIN: {
@@ -90,10 +99,10 @@ void userInput::operator()() {
                 strcpy(bytesToSend+2, username.c_str());
                 strcpy(bytesToSend+2+username.length()+1, password.c_str());
                 if(captcha == "1")
-                    bytesToSend[2+username.length()+1+password.length()+1] = 1;
+                    bytesToSend[numBytesToSend - 2] = 1;
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case LOGOUT:{
@@ -103,7 +112,7 @@ void userInput::operator()() {
                 shortToBytes(3, bytesToSend);
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case FOLLOW:{
@@ -112,7 +121,7 @@ void userInput::operator()() {
                 bool error = false;
                 if(ss.good()) {
                     getline(ss, follow, ' ');
-                    if(follow.length() != 1 || follow.at(0) != '0' || follow.at(0) != '1')
+                    if(follow.length() != 1 || (follow.at(0) != '0' && follow.at(0) != '1'))
                         error = true;
                 }
                 else error = true;
@@ -127,11 +136,11 @@ void userInput::operator()() {
                 int numBytesToSend = 2+1+username.length()+1;
                 char bytesToSend[numBytesToSend];
                 shortToBytes(4, bytesToSend);
-                bytesToSend[3] = followByte;
+                bytesToSend[2] = followByte;
                 strcpy(bytesToSend+3, username.c_str());
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case POST:{
@@ -151,7 +160,7 @@ void userInput::operator()() {
                 bytesToSend[numBytesToSend-2] = '\0';
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case PM:{
@@ -180,7 +189,7 @@ void userInput::operator()() {
                 strcpy(bytesToSend+2+username.length()+1+content.length()+1, dateString.c_str());
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case LOGSTAT:{
@@ -190,7 +199,7 @@ void userInput::operator()() {
                 shortToBytes(7, bytesToSend);
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case STAT:{
@@ -212,7 +221,7 @@ void userInput::operator()() {
                 }
                 bytesToSendVector.push_back(';');
                 if(!handler->sendBytes(bytesToSendVector.data(), bytesToSendVector.size()))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case BLOCK:{
@@ -232,7 +241,7 @@ void userInput::operator()() {
                 bytesToSend[numBytesToSend-2] = '\0';
                 bytesToSend[numBytesToSend-1] = ';';
                 if(!handler->sendBytes(bytesToSend, numBytesToSend))
-                    terminate = true;
+                    *terminate = true;
                 break;
             }
             case NOCOMMAND:{

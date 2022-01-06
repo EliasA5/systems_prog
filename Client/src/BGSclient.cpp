@@ -21,29 +21,31 @@ int main(int argc, char *argv[]){
         return 1;
     }
     bool terminate = false;
-    userInput sender(&connectionHandler, terminate);
+    userInput sender(&connectionHandler, &terminate);
     std::thread th1(std::ref(sender));
 
     std::string msg;
     short opcode;
 
     while(!terminate){
+        msg.clear();
+
         if(!connectionHandler.getFrameAscii(msg, ';')){
+            connectionHandler.close();
+            terminate = true;
             break;
         }
-        std::cout << "recieved msg from server: " << msg << std::endl;
         const char* bytes = msg.c_str();
         opcode = bytesToShort(bytes);
         if(opcode == 9){ //NOTIFICATION
             std::stringstream ss;
-            std::string notiType = msg.at(4) == '\0' ? " PM" : " Public";
-            int next_zerobyte = msg.find('\0', 5);
-            std::string username = msg.substr(5, next_zerobyte);
-            next_zerobyte = msg.find('\0', 5+next_zerobyte+1);
-            std::string content = msg.substr(next_zerobyte, std::string::npos);
-            ss << "NOTIFICATION" << notiType << ' ' << username << ' ' << content;
-            std::cout << ss.str();
-
+            std::string notiType = msg.at(2) == '\0' ? " PM" : " Public";
+            int first_zerobyte = msg.find('\0', 3);
+            std::string username = msg.substr(3,  first_zerobyte-2);
+            int second_zerobyte = msg.find('\0', 3+first_zerobyte+1);
+            std::string content = msg.substr(first_zerobyte+1, second_zerobyte - first_zerobyte);
+            ss << "NOTIFICATION" << notiType << " " << username << " " << content;
+            std::cout << ss.str() << std::endl;
         }
         else if(opcode == 10){ //ACK
             short msgOpcode = bytesToShort(bytes+2);
@@ -82,8 +84,7 @@ int main(int argc, char *argv[]){
             std::cout << "Unrecognized reply\n";
         }
 
-        msg.clear();
     }
 
-    th1.join();
+    th1.detach();
 }

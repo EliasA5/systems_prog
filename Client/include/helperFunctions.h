@@ -8,27 +8,27 @@
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
 
-static short bytesToShort(char* bytesArr)
+inline short bytesToShort(char* bytesArr)
 {
     short result = (short)((bytesArr[0] & 0xff) << 8);
     result += (short)(bytesArr[1] & 0xff);
     return result;
 }
 
-static short bytesToShort(const char* bytesArr)
+inline short bytesToShort(const char* bytesArr)
 {
     short result = (short)((bytesArr[0] & 0xff) << 8);
     result += (short)(bytesArr[1] & 0xff);
     return result;
 }
 
-static void shortToBytes(short num, char* bytesArr)
+inline void shortToBytes(short num, char* bytesArr)
 {
     bytesArr[0] = ((num >> 8) & 0xFF);
     bytesArr[1] = (num & 0xFF);
 }
 
-static std::string getDateAsString() {
+inline std::string getDateAsString() {
     boost::posix_time::ptime time(boost::posix_time::second_clock::local_time());
     boost::gregorian::date::ymd_type ymd = time.date().year_month_day();
     std::stringstream dateStream;
