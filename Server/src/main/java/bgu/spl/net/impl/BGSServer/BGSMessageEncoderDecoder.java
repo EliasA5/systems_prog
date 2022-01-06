@@ -23,7 +23,7 @@ public class BGSMessageEncoderDecoder implements MessageEncoderDecoder<Message> 
     @Override
     public byte[] encode(Message message) {
         //TODO encode messages
-        return new byte[1];
+        return message.encode();
     }
 
     private void pushByte(byte nextByte) {
@@ -36,38 +36,46 @@ public class BGSMessageEncoderDecoder implements MessageEncoderDecoder<Message> 
 
     private Message popMessage() {
         short opcode = Message.bytesToShort(bytes);
+        byte[] messageBytes = new byte[len];
+        System.arraycopy(bytes, 0, messageBytes, 0, len);
+        //TODO remove debugging
+        for(byte i : messageBytes)
+            System.out.print(i);
+        System.out.println();
+
         Message m;
         switch(opcode){
             case 1:
-                m = new Register(bytes);
+                m = new Register(messageBytes);
             break;
             case 2:
-                m = new Login(bytes);
+                m = new Login(messageBytes);
             break;
             case 3:
-                m = new Logout(bytes);
+                m = new Logout(messageBytes);
             break;
             case 4:
-                m = new Follow(bytes);
+                m = new Follow(messageBytes);
             break;
             case 5:
-                m = new Post(bytes);
+                m = new Post(messageBytes);
             break;
             case 6:
-                m = new PrivateMessage(bytes);
+                m = new PrivateMessage(messageBytes);
             break;
             case 7:
-                m = new Logstat(bytes);
+                m = new Logstat(messageBytes);
             break;
             case 8:
-                m = new Stat(bytes);
+                m = new Stat(messageBytes);
             break;
             case 12:
-                m = new Block(bytes);
+                m = new Block(messageBytes);
             break;
             default:
                 m = null;
         }
+        len = 0;
         return m;
     }
 

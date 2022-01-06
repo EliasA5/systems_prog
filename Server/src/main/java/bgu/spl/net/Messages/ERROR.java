@@ -21,6 +21,6 @@ public class ERROR extends Message{
     public byte[] encode(){
         byte[] error = shortToBytes(error_opcode);
         byte[] opcode_bytes = shortToBytes(opcode);
-        return concatAllBytes(error, opcode_bytes);
+        return concatAllBytes(error, opcode_bytes, endByte);
     }
 }

@@ -30,7 +30,7 @@ public class DataBase {
         if(captcha == 0)
             return false;
         String logged = null;
-        if(isLoggedIn(username) == -1 && userPass.get(username)[0].equals(password))
+        if(isLoggedIn(username) == -1 && userPass.getOrDefault(username, new String[]{""})[0].equals(password))
             logged = loggedIn.putIfAbsent(connectionID, username);
         else
             return false;
@@ -47,13 +47,14 @@ public class DataBase {
 
     public boolean add_follower(String toFollow, int connectionID){
         String me = loggedIn.get(connectionID);
-        if(me != null && userPass.get(toFollow) != null && isBlocked(me, toFollow))
+        if(me != null && isRegistered(toFollow) && !isBlocked(me, toFollow)) {
             followers.compute(me, (key, val) -> {
-               if(val == null)
-                   return new ConcurrentHashMap<>();
-               else
-                   return val;
+                if (val == null)
+                    return new ConcurrentHashMap<>();
+                else
+                    return val;
             }).put(toFollow, true);
+        }
         else
             return false;
         return true;
@@ -110,15 +111,16 @@ public class DataBase {
         return true;
     }
 
-    public int send(String user, Message m) {
+    public int send(String user, Message m) {//TODO check returning a null pointer
         int id = -1; //if this functions returns -1, do nothing as the message will be sent later when the user logs in
         if (userPass.get(user) != null) {
             id = isLoggedIn(user);
             if(id == -1)
-                toSend.compute(user, (key, value) -> {
-                    if (value != null)
-                        value = new ConcurrentLinkedQueue<>();
-                    return value;
+                toSend.compute(user, (key, val) -> {
+                    if (val == null)
+                        return new ConcurrentLinkedQueue<>();
+                    else
+                        return val;
                 }).add(m);
         }
         return id;

@@ -15,12 +15,15 @@ public abstract class Message {
     }
     public Message(){}
     //TODO implement process for each message
-    abstract boolean process(DataBase database, int connectionID, Connections<Message> connections);
+    abstract public boolean process(DataBase database, int connectionID, Connections<Message> connections);
     public byte[] encode(){
-        return new byte[0];
+        return endByte;
     }
 
 
+    public short getOpcode(){
+        return opcode;
+    }
     public static short bytesToShort(byte[] byteArr)
     {
         short result = (short)((byteArr[0] & 0xff) << 8);

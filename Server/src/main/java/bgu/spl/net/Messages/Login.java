@@ -18,7 +18,6 @@ public class Login extends Message{
         username = parsed[0];
         password = parsed[1];
         captcha = bytes[bytes.length-1];
-
     }
 
     @Override

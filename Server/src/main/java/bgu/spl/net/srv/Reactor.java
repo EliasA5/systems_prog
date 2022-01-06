@@ -26,7 +26,6 @@ public class Reactor<T> implements Server<T> {
     private Thread selectorThread;
     private final ConcurrentLinkedQueue<Runnable> selectorTasks = new ConcurrentLinkedQueue<>();
 
-    //TODO implementation of bidi protocols
     public Reactor(
             int numThreads,
             int port,

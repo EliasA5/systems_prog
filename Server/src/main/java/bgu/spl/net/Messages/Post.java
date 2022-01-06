@@ -14,12 +14,11 @@ public class Post extends Message{
         super(bytes);
         String[] parsed = new String(bytes,2 ,bytes.length-2, StandardCharsets.UTF_8).split("\0");
         content = parsed[0];
-
     }
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-
+        //TODO CHECK POST ON LOGGED OUT USER
         String sending_user = database.isLoggedIn(connectionID);
         if(sending_user == null){
             connections.send(connectionID, new ERROR(opcode));
@@ -38,6 +37,7 @@ public class Post extends Message{
                 connections.send(userConnectionID, noti);
         }
         database.increment_post(sending_user);
+        connections.send(connectionID, new ACK(opcode));
         return true;
     }
 }
