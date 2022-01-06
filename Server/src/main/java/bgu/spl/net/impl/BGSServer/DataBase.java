@@ -155,7 +155,7 @@ public class DataBase {
         String user;
         while(m.find()) {
             user = m.group();
-            users.add(user.substring(1));
+            users.add(user.trim().substring(1));
         }
         return users.toArray(new String[0]);
     }
