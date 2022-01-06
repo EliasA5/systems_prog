@@ -4,18 +4,7 @@
 
 #include "../include/userInput.h"
 
-enum command{
-    REGISTER,
-    LOGIN,
-    LOGOUT,
-    FOLLOW,
-    POST,
-    PM,
-    LOGSTAT,
-    STAT,
-    BLOCK,
-    NOCOMMAND
-};
+
 command getCommandFromString(std::string const &input){
     if(input == "REGISTER") return REGISTER;
     if(input == "LOGIN") return LOGIN;
@@ -34,15 +23,11 @@ userInput::~userInput(){}
 void userInput::operator()() {
     const short bufsize = 1024;
     char buf[bufsize];
-    int nextDelim;
     while(!terminate){
         std::cin.getline(buf, bufsize);
         std::stringstream ss(buf);
-        ss.seekg(0, std::ios::end);
-        int len = ss.tellg();
 
         std::string command;
-        std::string tmp;
         if(ss.good()){
             getline(ss, command, ' ');
         }
@@ -138,7 +123,7 @@ void userInput::operator()() {
                     std::cout << "Usage: FOLLOW <0/1 (follow/unfollow)> username" << std::endl;
                     break;
                 }
-                char followByte = follow.at(0);
+                char followByte = follow.at(0) == '0' ? 0 : 1;
                 int numBytesToSend = 2+1+username.length()+1;
                 char bytesToSend[numBytesToSend];
                 shortToBytes(4, bytesToSend);
@@ -215,7 +200,6 @@ void userInput::operator()() {
                 shortToBytes(8, opcode);
                 bytesToSendVector.push_back(opcode[0]);
                 bytesToSendVector.push_back(opcode[1]);
-                bool error = false;
                 if(!ss.good()){
                     std::cout << "Usage: STAT <user>|<user>...|<user>" << std::endl;
                     break;
@@ -252,7 +236,7 @@ void userInput::operator()() {
                 break;
             }
             case NOCOMMAND:{
-                std::cout<<"Not a valid command";
+                std::cout<< "Not a valid command" << std::endl;
                 break;
             }
         }

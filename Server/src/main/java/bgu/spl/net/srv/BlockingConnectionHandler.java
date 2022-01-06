@@ -20,7 +20,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 
 
 
-    public BlockingConnectionHandler(Socket _sock, MessageEncoderDecoder _encdec, BidiMessagingProtocol _protocol){
+    public BlockingConnectionHandler(Socket _sock, MessageEncoderDecoder<T> _encdec, BidiMessagingProtocol<T> _protocol){
         sock = _sock;
         protocol = _protocol;
         encdec = _encdec;

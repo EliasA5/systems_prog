@@ -11,7 +11,18 @@
 #include <string>
 #include <fstream>
 #include <stdlib.h>
-
+enum command{
+    REGISTER,
+    LOGIN,
+    LOGOUT,
+    FOLLOW,
+    POST,
+    PM,
+    LOGSTAT,
+    STAT,
+    BLOCK,
+    NOCOMMAND
+};
 
 class userInput{
 private:

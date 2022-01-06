@@ -15,7 +15,16 @@ public class DataBase {
     private ConcurrentHashMap<String, ConcurrentHashMap<String, Boolean>> blocked;
     private ConcurrentHashMap<Integer, String> loggedIn; //Username, connectionID
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>> toSend;
-    private String[] filtered_words;
+    private String[] filtered_words = {"war", "trump"};
+
+
+    public DataBase(){
+        userPass = new ConcurrentHashMap<>();
+        followers = new ConcurrentHashMap<>();
+        blocked = new ConcurrentHashMap<>();
+        loggedIn = new ConcurrentHashMap<>();
+        toSend = new ConcurrentHashMap<>();
+    }
 
     public boolean logIn(String username, String password, int connectionID, byte captcha){
         if(captcha == 0)
