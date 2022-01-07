@@ -46,17 +46,25 @@ void userInput::operator()() {
                 std::string password;
                 std::string birthday;
                 bool error = false;
+                bool bdayError = false;
                 if(ss.good())
                     getline(ss, username, ' ');
                 else error = true;
                 if(ss.good())
                     getline(ss, password, ' ');
                 else error = true;
-                if(ss.good())
+                if(ss.good()) {
                     getline(ss, birthday, ' ');
+                    if(birthday.length() != 10 || birthday.at(2) != '-' || birthday.at(5) != '-')
+                        bdayError = true;
+                }
                 else error = true;
                 if(error) {
                     std::cout << "Usage: REGISTER username password birthday" << std::endl;
+                    break;
+                }
+                if(bdayError){
+                    std::cout << "Birthday format: DD-MM-YYYY" << std::endl;
                     break;
                 }
                 int numBytesToSend = 2+username.length()+1+password.length()+1+birthday.length()+2;
