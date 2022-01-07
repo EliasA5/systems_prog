@@ -189,6 +189,16 @@ public class DataBase {
         return followers.getOrDefault(me, new ConcurrentHashMap<>()).keySet().toArray(new String[0]);
     }
 
+    public String[] getWhoFollowMe(int connectionID){
+        String me = loggedIn.get(connectionID);
+        ConcurrentLinkedQueue<String> q = new ConcurrentLinkedQueue<>();
+        followers.forEachEntry(1, (entry) -> {
+            if (entry.getValue().get(me) != null)
+                q.add(entry.getKey());
+        });
+        return q.toArray(new String[0]);
+    }
+
     public boolean isRegistered(String username){
         return userPass.containsKey(username);
     }
@@ -198,20 +208,17 @@ public class DataBase {
     }
 
     public ConcurrentLinkedQueue<byte[]> getLogStats(){
-        String user;
-        short age;
-        short num_posts;
-        short num_followers;
-        short num_following;
         ConcurrentLinkedQueue<byte[]> result = new ConcurrentLinkedQueue<>();
-        for(Map.Entry<String, String[]> entry: userPass.entrySet()){
-            user = entry.getKey();
-            age = (short) (Year.now().getValue() - Integer.parseInt(entry.getValue()[1].substring(6,10)));
-            num_posts = (short) Integer.parseInt(entry.getValue()[2]);
-            num_followers = (short) get_num_followers(user);
-            num_following = (short) get_num_following(user);
+        loggedIn.forEachValue(1, (user) ->{
+            String[] info = userPass.getOrDefault(user, null);
+            if(info == null)
+                return;
+            short age = (short) (Year.now().getValue() - Integer.parseInt(info[1].substring(6,10)));
+            short num_posts = (short) Integer.parseInt(info[2]);
+            short num_followers = (short) get_num_followers(user);
+            short num_following = (short) get_num_following(user);
             result.add(Message.concatAllBytes(Message.shortToBytes(age), Message.shortToBytes(num_posts), Message.shortToBytes(num_followers), Message.shortToBytes(num_following)));
-        }
+        });
         return result;
     }
     public byte[] getLogStat(String username){

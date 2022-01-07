@@ -13,7 +13,7 @@ public class Logstat extends Message{
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-        if(database.isLoggedIn(connectionID) != null) {
+        if(database.isLoggedIn(connectionID) == null) {
             connections.send(connectionID, new ERROR(opcode));
             return false;
         }

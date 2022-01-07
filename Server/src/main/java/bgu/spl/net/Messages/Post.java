@@ -26,7 +26,7 @@ public class Post extends Message{
         String filtered_content = database.filter(content);
         NOTIFICATION noti = new NOTIFICATION((byte) 1, sending_user, filtered_content);
         String[] users_in_content = database.find_users_in_content(content);
-        String[] followers = database.getFollowers(connectionID);
+        String[] followers = database.getWhoFollowMe(connectionID);
         TreeSet<String> toSend = new TreeSet<>();
         toSend.addAll(Arrays.asList(users_in_content));
         toSend.addAll(Arrays.asList(followers));

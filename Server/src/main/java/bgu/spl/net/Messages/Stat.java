@@ -11,13 +11,12 @@ public class Stat extends Message{
 
     public Stat(byte[] bytes){
         super(bytes);
-        String[] parsed = new String(bytes,2 ,bytes.length-2, StandardCharsets.UTF_8).split("\0");
-        usernames = parsed[0].split("|");
+        usernames = new String(bytes,2 ,bytes.length-2, StandardCharsets.UTF_8).split("\0");
     }
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-        if(database.isLoggedIn(connectionID) != null) {
+        if(database.isLoggedIn(connectionID) == null) {
             connections.send(connectionID, new ERROR(opcode));
             return false;
         }
@@ -27,7 +26,7 @@ public class Stat extends Message{
             if(info == null)//TODO check if send error to all
                 connections.send(connectionID, new ERROR(opcode));
             else
-                connections.send(connectionID, new ACK(info));
+                connections.send(connectionID, new ACK(opcode, info));
         }
         return true;
     }
