@@ -21,9 +21,9 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
     private final MessageEncoderDecoder<T> encdec;
     private final Queue<ByteBuffer> writeQueue = new ConcurrentLinkedQueue<>();
     private final SocketChannel chan;
-    private final Reactor reactor;
+    private final Reactor<T> reactor;
 
-    public NonBlockingConnectionHandler(MessageEncoderDecoder _encdec, BidiMessagingProtocol _protocol, SocketChannel _chan, Reactor _reactor){
+    public NonBlockingConnectionHandler(MessageEncoderDecoder<T> _encdec, BidiMessagingProtocol<T> _protocol, SocketChannel _chan, Reactor<T> _reactor){
         encdec = _encdec;
         protocol = _protocol;
         chan = _chan;
