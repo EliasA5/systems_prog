@@ -38,6 +38,7 @@ public class BGSMessageEncoderDecoder implements MessageEncoderDecoder<Message> 
         byte[] messageBytes = new byte[len];
         System.arraycopy(bytes, 0, messageBytes, 0, len);
         //TODO remove debugging
+        System.out.print("Received msg in bytes: ");
         for(byte i : messageBytes)
             System.out.print(i);
         System.out.println();

@@ -207,11 +207,11 @@ public class DataBase {
         return followers.getOrDefault(B, new ConcurrentHashMap<>()).containsKey(A);
     }
 
-    public ConcurrentLinkedQueue<byte[]> getLogStats(){
+    public ConcurrentLinkedQueue<byte[]> getLogStats(String askingUser){
         ConcurrentLinkedQueue<byte[]> result = new ConcurrentLinkedQueue<>();
         loggedIn.forEachValue(1, (user) ->{
             String[] info = userPass.getOrDefault(user, null);
-            if(info == null)
+            if(info == null || isBlocked(askingUser, user))
                 return;
             short age = (short) (Year.now().getValue() - Integer.parseInt(info[1].substring(6,10)));
             short num_posts = (short) Integer.parseInt(info[2]);
@@ -221,8 +221,8 @@ public class DataBase {
         });
         return result;
     }
-    public byte[] getLogStat(String username){
-        String[] info = userPass.get(username);
+    public byte[] getLogStat(String askingUser, String username){
+        String[] info = isBlocked(askingUser, username) ? null : userPass.get(username);
         if(info == null)
             return null;
         short age = (short) (Year.now().getValue() - Integer.parseInt(info[1].substring(6,10)));

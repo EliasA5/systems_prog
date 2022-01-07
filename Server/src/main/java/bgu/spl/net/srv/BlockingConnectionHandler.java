@@ -28,7 +28,6 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 
     @Override
     public void send(T msg){
-        //TODO check if out != null is needed or connected == true
         if(msg != null && connected)
             try{
                 out.write(encdec.encode(msg));

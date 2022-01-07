@@ -18,7 +18,6 @@ public class Post extends Message{
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-        //TODO CHECK POST ON LOGGED OUT USER
         String sending_user = database.isLoggedIn(connectionID);
         if(sending_user == null){
             connections.send(connectionID, new ERROR(opcode));
@@ -32,7 +31,9 @@ public class Post extends Message{
         toSend.addAll(Arrays.asList(followers));
         int userConnectionID;
         for(String user : toSend){
-            userConnectionID = database.send(user, noti);
+            userConnectionID = -1;
+            if(!database.isBlocked(sending_user, user))
+                userConnectionID = database.send(user, noti);
             if(userConnectionID != -1)
                 connections.send(userConnectionID, noti);
         }

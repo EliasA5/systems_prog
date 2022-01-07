@@ -16,15 +16,18 @@ public class Stat extends Message{
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-        if(database.isLoggedIn(connectionID) == null) {
+        String me = database.isLoggedIn(connectionID);
+        if(me == null) {
             connections.send(connectionID, new ERROR(opcode));
             return false;
         }
         byte[] info;
         for(String user : usernames){
-            info = database.getLogStat(user);
-            if(info == null)//TODO check if send error to all
+            info = database.getLogStat(me, user);
+            if(info == null) {
                 connections.send(connectionID, new ERROR(opcode));
+                break;
+            }
             else
                 connections.send(connectionID, new ACK(opcode, info));
         }

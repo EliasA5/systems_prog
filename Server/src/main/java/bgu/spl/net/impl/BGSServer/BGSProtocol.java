@@ -28,7 +28,7 @@ public class BGSProtocol implements BidiMessagingProtocol<Message> {
     @Override
     public void process(Message message){
         boolean success = message.process(database, connectionId, connections);
-        System.out.println("got new msg with opcode" + message.getOpcode() + " on connectionID: " + connectionId + " resulted in: " + success);
+        System.out.println("got new msg with opcode " + message.getOpcode() + " on connectionID: " + connectionId + " resulted in: " + success);
         if(message.getOpcode() == 3 && success)
             shouldTerminate = true;
     }

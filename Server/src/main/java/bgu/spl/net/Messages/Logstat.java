@@ -13,11 +13,12 @@ public class Logstat extends Message{
 
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
-        if(database.isLoggedIn(connectionID) == null) {
+        String me = database.isLoggedIn(connectionID);
+        if(me == null) {
             connections.send(connectionID, new ERROR(opcode));
             return false;
         }
-        ConcurrentLinkedQueue<byte[]> stats = database.getLogStats();
+        ConcurrentLinkedQueue<byte[]> stats = database.getLogStats(me);
         for(byte[] stat: stats)
             connections.send(connectionID, new ACK(opcode, stat));
         return true;
