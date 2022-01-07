@@ -21,7 +21,7 @@ public class PrivateMessage extends Message {
     @Override
     public boolean process(DataBase database, int connectionID, Connections<Message> connections){
         String sending_user = database.isLoggedIn(connectionID);
-        if(sending_user == null || !database.isRegistered(username) || !database.isAFollowingB(sending_user, username)){
+        if(sending_user == null || !database.isRegistered(username) || !database.isAFollowingB(username, sending_user)){
             connections.send(connectionID, new ERROR(opcode));
             return false;
         }

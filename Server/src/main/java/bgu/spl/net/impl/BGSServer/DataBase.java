@@ -47,7 +47,7 @@ public class DataBase {
 
     public boolean add_follower(String toFollow, int connectionID){
         String me = loggedIn.get(connectionID);
-        if(me != null && isRegistered(toFollow) && !isBlocked(me, toFollow)) {
+        if(me != null && isRegistered(toFollow) && !isBlocked(me, toFollow) && !isInFollowerList(me, toFollow)) {
             followers.compute(me, (key, val) -> {
                 if (val == null)
                     return new ConcurrentHashMap<>();
@@ -87,7 +87,7 @@ public class DataBase {
 
     public boolean remove_follower(String toUnfollow, int connectionID){
         String me = loggedIn.get(connectionID);
-        if(me != null)
+        if(me != null && isInFollowerList(me, toUnfollow))
             followers.compute(me, (key, value) -> {
                 if(value != null)
                     value.remove(toUnfollow);
@@ -96,6 +96,10 @@ public class DataBase {
         else
             return false;
         return true;
+    }
+
+    private boolean isInFollowerList(String me, String follower){
+        return followers.getOrDefault(me, new ConcurrentHashMap<>()).get(follower) != null;
     }
 
     public boolean remove_blocked(String toUnblock, int connectionID){
