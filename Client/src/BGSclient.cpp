@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
             else if(msgOpcode == 4){ //FOLLOW
                 std::string notiType = msg.at(4) == 0 ? "FOLLOW" : "UNFOLLOW";
                 int next_zerobyte = msg.find('\0', 5);
-                std::string username = msg.substr(5, next_zerobyte);
+                std::string username = msg.substr(5, next_zerobyte-4);
                 ss << notiType << ' ' << username << std::endl;
                 std::cout << ss.str();
             }

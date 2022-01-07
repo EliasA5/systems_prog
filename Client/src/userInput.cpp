@@ -20,10 +20,6 @@ command getCommandFromString(std::string const &input){
 }
 userInput::userInput(ConnectionHandler* _handler, bool* _terminate): handler(_handler), terminate(_terminate){}
 userInput::~userInput(){}
-static bool waitInput(char* buf, short bufsize){
-    std::cin.getline(buf, bufsize);
-    return true;
-}
 
 void userInput::operator()() {
     const short bufsize = 1024;
